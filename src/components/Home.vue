@@ -12,15 +12,7 @@
         <button @click="add" :disabled="addBtn_disabled" class="btn btn-primary">投稿</button>
       </div>
       <h3 class="my-3">Messages</h3>
-      <ul class="list-group text-left">
-        <li v-for="(item, key) in data.board_data" :key="key" class="list-group-item">
-          <div class="h5">{{item.msg}}</div>
-          <div class="small text-right"><router-link :to="{name:'Profile',params:{prmUid:item.user}}">{{setName(item.user)}}</router-link> ({{item.posted}})</div>
-          <span @click="toggle_like" class="btn-like" :class="{on:item.likeOn}" :data-id="item.key"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"/></svg></span>
-          <span v-if="item.like" class="like-cnt">{{Object.keys(item.like).length}}</span>
-          <span v-else class="like-cnt">0</span>
-        </li>
-      </ul>
+      <BoadList orderBy="key" />
     </div>
     <div v-else>
       <div class="alert alert-warning">
@@ -36,54 +28,29 @@ import firebase from '../plugins/firebase'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { logout, auth } from '../plugins/auth'
+import BoadList from './BoadList.vue'
 
 const provider = new firebase.auth.GoogleAuthProvider()
 const db = firebase.database()
 const db_board = db.ref('board/')
 
 export default {
+  components: {
+    BoadList
+  },
   setup(props) {
     const data = reactive({
       message: 'ミニ伝言板。最新の投稿を表示します。',
       user: null,
       msg: '',
       msg_maxlength: 128,
-      num_per_page: 10, //取り出すデータ数
-      board_data: {},
       router: useRouter(),
-      store: useStore(),
+      store: useStore()
     })
 
     // 初期表示
     const init = ()=> {
       data.message = 'ログインしました。'
-      db_board.orderByKey().limitToLast(data.num_per_page)
-      .on('value', (snapshot)=> {
-        let arr = []
-        let result = snapshot.val()
-        for(let item in result){
-          result[item].key=item
-          let like=result[item].like
-          if(like && like[data.store.state.uid]){
-            result[item].likeOn=true
-          }else{
-            result[item].likeOn=false
-          }
-          arr.unshift(result[item])
-        }
-        data.board_data = arr
-      })
-    }
-
-    //uidからユーザー名を返す
-    const setName = (uidStr)=> {
-      let data
-      db.ref('users/' + uidStr + '/displayName').on('value', (snapshot) => {
-        data = snapshot.val()
-        //console.log(data) //(1)
-      })
-      //console.log(data)   //(2)
-      return data
     }
 
     // ログアウト処理
@@ -134,28 +101,6 @@ export default {
       return data.msg.length>data.msg_maxlength?true:false
     })
 
-    // いいねボタン
-    const toggle_like=(e)=>{
-      let _elm=e.currentTarget
-      if(_elm.classList.contains('on')){
-        db.ref('board/'+_elm.getAttribute('data-id')+'/like').update({
-          [data.store.state.uid]: null,
-        }, (error) => {
-          if (!error) {
-            _elm.classList.remove('on')
-          }
-        })
-      }else{
-        db.ref('board/'+_elm.getAttribute('data-id')+'/like').update({
-          [data.store.state.uid]: 1,
-        }, (error) => {
-          if (!error) {
-            _elm.classList.add('on')
-          }
-        })
-      }
-    }
-
     onMounted(()=> {
       if (data.store.state.uid){
         init()
@@ -164,7 +109,7 @@ export default {
         data.router.push('/signin')
       }
     })
-    return { data, init, setName, doLogout, add, addBtn_disabled, msg_cntOver, toggle_like }
+    return { data, init, doLogout, add, addBtn_disabled, msg_cntOver }
   },
 }
 </script>

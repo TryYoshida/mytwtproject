@@ -9,17 +9,26 @@
 <body>
   <div id="test"></div>
   <script>
-    async function testFunc(x){
-      return x+' test'
+    const fun1=(x)=>{
+      const fun2=()=>{
+        return(x+"abc")
+      }
+      return fun2()
     }
-    function testWrite(){
-      // document.getElementById('test').textContent=testFunc('Hello!')
+    
+    console.log(fun1("aaa"))
 
-      testFunc('Hello!').then(x => {
-        document.getElementById('test').textContent=x
-      })
-    }
-    testWrite()
+    // async function testFunc(x){
+    //   return x+' test'
+    // }
+    // function testWrite(){
+    //   // document.getElementById('test').textContent=testFunc('Hello!')
+
+    //   testFunc('Hello!').then(x => {
+    //     document.getElementById('test').textContent=x
+    //   })
+    // }
+    // testWrite()
   </script>
 </body>
 </html>
