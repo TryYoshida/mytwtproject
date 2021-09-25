@@ -58,6 +58,9 @@ export default {
                 obj.email = result.email
                 obj.displayName = result.displayName
                 obj.photoURL = result.photoURL===null ? obj.photoURL : result.photoURL
+                obj.follow = result.follow
+                obj.followed = result.followed
+
                 console.log(result)
                 console.log(obj)
                 obj.uid=reUid

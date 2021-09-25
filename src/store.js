@@ -9,8 +9,8 @@ export const store = createStore({
       email: '',
       displayName: '',
       photoURL: '',
-      // follow: null,
-      // followed: null
+      follow: null,
+      followed: null
     }
   },
   mutations: {
@@ -19,8 +19,8 @@ export const store = createStore({
       state.email = user.email
       state.displayName = user.displayName
       state.photoURL = user.photoURL
-      // state.follow = user.follow
-      // state.followed = user.followed
+      state.follow = user.follow
+      state.followed = user.followed
       // state.photoURL = user.photoURL===null ? commonJS.photoURL_dft : user.photoURL
     }
   },

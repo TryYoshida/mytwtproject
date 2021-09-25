@@ -125,6 +125,7 @@ export default {
           [_elm.getAttribute('data-user')+'/followed/'+data.store.state.uid]: null,
         }, (error) => {
           if (!error) {
+            data.store.state.follow=
             _elm.classList.remove('on')
           }
         })

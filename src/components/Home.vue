@@ -11,7 +11,9 @@
         <p class="msg-counter"><span>{{data.msg.length}}</span>/{{data.msg_maxlength}}</p>
         <button @click="add" :disabled="addBtn_disabled" class="btn btn-primary">投稿</button>
       </div>
-      <h3 class="my-3">Messages</h3>
+      <h3 class="my-3">フォロー中のユーザーの投稿</h3>
+      <BoadList orderBy="user" :equalToObj="data.store.state.follow" />
+      <h3 class="my-3">全ユーザーの最新の投稿</h3>
       <BoadList orderBy="key" />
     </div>
     <div v-else>
@@ -41,7 +43,6 @@ export default {
   setup(props) {
     const data = reactive({
       message: 'ミニ伝言板。最新の投稿を表示します。',
-      user: null,
       msg: '',
       msg_maxlength: 128,
       router: useRouter(),

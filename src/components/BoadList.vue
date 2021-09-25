@@ -28,6 +28,9 @@ export default {
     equalTo: {
       type: String
     },
+    equalToObj: {
+      type: Object
+    },
     numPerPage: {
       type: Number,
       default: 10
@@ -42,17 +45,11 @@ export default {
 
     // 初期表示
     const init = ()=> {
-      // console.log(props.orderBy)
       // console.log(props.equalTo)
       // console.log(props.numPerPage)
       let set_db
-      if(props.orderBy==='key'){
-        set_db = db_board.orderByKey().limitToLast(props.numPerPage)
-      }else{
-        set_db = db_board.orderByChild(props.orderBy).equalTo(props.equalTo).limitToLast(props.numPerPage)
-      }
-      set_db.on('value', (snapshot)=> {
-        let arr = []
+      let arr = []
+      let xMkBoardArr = (snapshot)=>{
         let result = snapshot.val()
         for(let item in result){
           result[item].key=item
@@ -64,8 +61,34 @@ export default {
           }
           arr.unshift(result[item])
         }
-        data.board_data = arr
-      })
+      }
+
+      console.log(props.equalToObj)
+      if(props.equalToObj){
+        arr = []
+        loop: Object.keys(props.equalToObj).forEach(function (key) {
+          console.log(key)
+          set_db = db_board.orderByChild(props.orderBy).equalTo(key).limitToLast(props.numPerPage)
+          set_db.on('value', (snapshot)=> {
+            xMkBoardArr(snapshot)
+            // if(i<props.equalToObj.length){
+            //   continue loop
+            // }
+            data.board_data = arr
+          })
+        })
+      }else{
+        if(props.orderBy==='key'){
+          set_db = db_board.orderByKey().limitToLast(props.numPerPage)
+        }else{
+          set_db = db_board.orderByChild(props.orderBy).equalTo(props.equalTo).limitToLast(props.numPerPage)
+        }
+        set_db.on('value', (snapshot)=> {
+          arr = []
+          xMkBoardArr(snapshot)
+          data.board_data = arr
+        })
+      }
     }
 
     //uidからユーザー名を返す
