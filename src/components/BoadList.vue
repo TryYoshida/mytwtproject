@@ -63,11 +63,11 @@ export default {
         }
       }
 
-      console.log(props.equalToObj)
+      // console.log(props.equalToObj)
       if(props.equalToObj){
         arr = []
-        loop: Object.keys(props.equalToObj).forEach(function (key) {
-          console.log(key)
+        Object.keys(props.equalToObj).forEach(function (key) {
+          // console.log(key)
           set_db = db_board.orderByChild(props.orderBy).equalTo(key).limitToLast(props.numPerPage)
           set_db.on('value', (snapshot)=> {
             xMkBoardArr(snapshot)
@@ -87,20 +87,32 @@ export default {
           arr = []
           xMkBoardArr(snapshot)
           data.board_data = arr
+
+          // console.log(data.board_data)
         })
       }
     }
 
     //uidからユーザー名を返す
     const setName = (uidStr)=> {
-      let userName
+      let userName='abc'
       db.ref('users/' + uidStr + '/displayName').on('value', (snapshot) => {
         userName = snapshot.val()
-        //console.log(userName) //(1)
+        console.log(userName) //(1)
+        // return userName
       })
       //console.log(userName)   //(2)
       return userName
     }
+
+    // const setName = (uidStr)=> {
+    //   const dataX= db.ref('users/' + uidStr + '/displayName').once('value').then((snapshot) => {
+    //     return snapshot.val()
+    //     // console.log(userName) 
+    //   })
+    //   console.log(dataX)
+    //   return dataX
+    // }
 
     // いいねボタン
     const toggle_like = (e)=> {
