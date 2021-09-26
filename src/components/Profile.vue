@@ -19,7 +19,11 @@
     <div v-if="data.modalOpen" class="modal">
       <div>
         <form action="" @submit="editProfile">
-          <p class="photo"><img :src="data.mdUser_data.photoURL" alt="" width="100"></p>
+          <div class="upload">
+            <p v-if="data.uploadImageUrl" class="photo"><img :src="data.uploadImageUrl" alt="" width="100"></p>
+            <p v-else class="photo"><img :src="data.mdUser_data.photoURL" alt="" width="100"></p>
+            <input type="file" accept="image/*" show-size @change="onImagePicked">
+          </div>
           <dl>
             <dt>名前（必須）</dt>
             <dd><input type="text" v-model="data.mdUser_data.displayName" class="form-control" required></dd>
@@ -44,10 +48,12 @@ import firebase from '../plugins/firebase'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import * as commonJS from '../plugins/common'
+import { attachImage, upload } from '../plugins/auth'
 
 import BoadList from './BoadList.vue'
 
 const db = firebase.database()
+const storage = firebase.storage()
 
 export default {
   props:{
@@ -64,7 +70,10 @@ export default {
       followFlg: false, //フォローしているかどうか
       router: useRouter(),
       store: useStore(),
-      modalOpen: false
+      modalOpen: false,
+
+      uploadImageUrl: "",
+      input_image:null
     })
 
     // 初期表示
@@ -95,10 +104,40 @@ export default {
         data.modalOpen = false
         data.mdUser_data = null
       }
-
     }
+
+    //プロフィール写真のアップロード
+    const submit = ()=> {
+      
+    }
+    
+    const onImagePicked = (e)=>{
+      const file = e.target.files[0]
+      // console.log(e.target.files[0].name)
+      if (file !== undefined && file !== null) {
+        if (file.name.lastIndexOf('.') <= 0) {
+          return
+        }
+        data.input_image=file
+        const fr = new FileReader()
+        fr.readAsDataURL(file)
+        fr.addEventListener('load', () => {
+          data.uploadImageUrl = fr.result
+        })
+      } else {
+        data.uploadImageUrl = ''
+      }
+    }
+
+
     //プロフィールの編集　保存
     const editProfile = ()=> {
+      // upload(data.uploadImageUrl, 'test.png').then(() => {
+      //   // 画像をアップロードしました
+      // })
+      attachImage(data.input_image, "test/")
+
+
       data.store.state.photoURL = data.user_data.photoURL = data.mdUser_data.photoURL ? data.mdUser_data.photoURL : commonJS.PHOTO_URL_DFT
       data.store.state.displayName = data.user_data.displayName = data.mdUser_data.displayName
       data.user_data.profile = data.mdUser_data.profile
@@ -148,7 +187,7 @@ export default {
         data.router.push('/signin')
       }
     })
-    return { props, data, init, toggle_editWin, editProfile, toggle_follow }
+    return { props, data, init, toggle_editWin, onImagePicked, editProfile, toggle_follow }
   },
 }
 </script>
@@ -163,7 +202,7 @@ export default {
   align-items: center;
   justify-content: center;
 }
-.modal div {
+.modal>div {
   background-color: #fff;
   box-sizing: border-box;
   width: 500px;
