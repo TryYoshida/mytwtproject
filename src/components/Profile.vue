@@ -44,6 +44,7 @@ import firebase from '../plugins/firebase'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import * as commonJS from '../plugins/common'
+
 import BoadList from './BoadList.vue'
 
 const db = firebase.database()
@@ -61,8 +62,6 @@ export default {
       mdUser_data: null,
       myFlg: false, //自身のプロフィールページかどうか
       followFlg: false, //フォローしているかどうか
-      num_per_page: 10, //☆取り出すデータ数
-      board_data: {},
       router: useRouter(),
       store: useStore(),
       modalOpen: false
@@ -100,7 +99,7 @@ export default {
     }
     //プロフィールの編集　保存
     const editProfile = ()=> {
-      data.store.state.photoURL = data.user_data.photoURL = data.mdUser_data.photoURL ? data.mdUser_data.photoURL : commonJS.photoURL_dft
+      data.store.state.photoURL = data.user_data.photoURL = data.mdUser_data.photoURL ? data.mdUser_data.photoURL : commonJS.PHOTO_URL_DFT
       data.store.state.displayName = data.user_data.displayName = data.mdUser_data.displayName
       data.user_data.profile = data.mdUser_data.profile
       data.user_data.place = data.mdUser_data.place

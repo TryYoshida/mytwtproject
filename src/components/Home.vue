@@ -30,6 +30,8 @@ import firebase from '../plugins/firebase'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { logout, auth } from '../plugins/auth'
+import * as commonJS from '../plugins/common'
+
 import BoadList from './BoadList.vue'
 
 const provider = new firebase.auth.GoogleAuthProvider()
@@ -44,7 +46,7 @@ export default {
     const data = reactive({
       message: 'ミニ伝言板。最新の投稿を表示します。',
       msg: '',
-      msg_maxlength: 128,
+      msg_maxlength: commonJS.MESSAGE_MAX_LENGTH,
       router: useRouter(),
       store: useStore()
     })

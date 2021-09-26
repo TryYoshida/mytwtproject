@@ -15,6 +15,7 @@ import { onMounted, ref, reactive } from 'vue'
 import firebase from '../plugins/firebase'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import * as commonJS from '../plugins/common'
 
 const db = firebase.database()
 const db_board = db.ref('board/')
@@ -33,7 +34,7 @@ export default {
     },
     numPerPage: {
       type: Number,
-      default: 10
+      default: commonJS.NUM_PER_PAGE
     }
   },
   setup(props) {

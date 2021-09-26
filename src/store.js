@@ -21,7 +21,7 @@ export const store = createStore({
       state.photoURL = user.photoURL
       state.follow = user.follow
       state.followed = user.followed
-      // state.photoURL = user.photoURL===null ? commonJS.photoURL_dft : user.photoURL
+      // state.photoURL = user.photoURL===null ? commonJS.PHOTO_URL_DFT : user.photoURL
     }
   },
   actions: {

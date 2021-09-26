@@ -45,7 +45,7 @@ export default {
               photoURL: user.photoURL
             }
             if(obj.photoURL===null){
-              obj.photoURL=commonJS.photoURL_dft
+              obj.photoURL=commonJS.PHOTO_URL_DFT
             }
             // 新規登録時の処理
             if(authResult.additionalUserInfo.isNewUser){
