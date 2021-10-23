@@ -23,15 +23,16 @@ export function auth () {
 /**
  * 画像をアップロードします
  * @param inputFile ファイル
- * @param directory バケット名
+ * @param directory ディレクトリ
  */
-export function attachImage(inputFile, bucket) {
+export function attachImage(inputFile, directory) {
   const file = inputFile
-  if(!file || !bucket) {
+  if(!file || !directory) {
     return;
   }
+  console.log(`file.name= ${file.name}`)
 
-  const uploadTask = firebase.storage().ref().child(`${bucket}${file.name}`).put(file)
+  const uploadTask = firebase.storage().ref().child(`${directory}${file.name}`).put(file)
   uploadTask.on('state_changed',
     (snapshot) => {
       // 成功時の処理

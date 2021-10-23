@@ -62,9 +62,11 @@ export default {
         data.board_data = {}
         data.store.dispatch("auth", {
           uid: '',
-          email: '',
+          //email: '',
           displayName: '',
-          photoURL: ''
+          photoURL: '',
+          follow: null,
+          followed: null
         })
         data.message = 'ログアウトしました。'
         data.router.push('/signin')

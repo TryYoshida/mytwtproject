@@ -1,5 +1,8 @@
 <template>
-  <ul class="list-group text-left">
+  <div v-if="data.message">
+    <p>{{data.message}}</p>
+  </div>
+  <ul v-else class="list-group text-left">
     <li v-for="(item, key) in data.board_data" :key="key" class="list-group-item">
       <div class="h5">{{item.msg}}</div>
       <div class="small text-right"><router-link :to="{name:'Profile',params:{prmUid:item.user}}">{{item.displayName}}</router-link> ({{item.posted}})</div>
@@ -11,7 +14,7 @@
 </template>
 
 <script>
-import { onMounted, ref, reactive } from 'vue'
+import { onMounted, ref, reactive, nextTick } from 'vue'
 import firebase from '../plugins/firebase'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -40,6 +43,7 @@ export default {
   setup(props) {
     const data = reactive({
       board_data: {},
+      message: "",
       router: useRouter(),
       store: useStore()
     })
@@ -62,7 +66,12 @@ export default {
         }
       }
 
-      if(props.equalToObj){
+      if(props.equalToObj!==undefined){
+        console.log("BoadList1")
+        if(!props.equalToObj){
+          data.message="フォローしているユーザーがいません"
+          return
+        }
         arr = []
         Object.keys(props.equalToObj).forEach(function (key) {
           set_db = db_board.orderByChild(props.orderBy).equalTo(key).limitToLast(props.numPerPage)
@@ -74,8 +83,15 @@ export default {
         })
       }else{
         if(props.orderBy==='key'){
+          console.log("BoadList2")
           set_db = db_board.orderByKey().limitToLast(props.numPerPage)
         }else{
+          if(!props.equalTo){
+            data.message="ユーザーが読み込めませんでした"
+            return
+          }
+          console.log("BoadList3")
+          console.log(props.equalToObj)
           set_db = db_board.orderByChild(props.orderBy).equalTo(props.equalTo).limitToLast(props.numPerPage)
         }
         set_db.on('value', (snapshot)=> {
@@ -118,7 +134,7 @@ export default {
       }
     }
 
-    onMounted(()=> {
+    nextTick(()=> {
       init()
     })
     return { props, data, init, toggle_like }

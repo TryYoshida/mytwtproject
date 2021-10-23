@@ -3,6 +3,8 @@
     <h2>ログイン／新規登録</h2>
     <div id="firebaseui-auth-container"></div>
     <div id="loader">Loading...</div>
+    <p>Demo User: test@example.com</p>
+    <p>投稿なしユーザー: test0@example.com</p>
   </div>
 </template>
 
@@ -40,7 +42,7 @@ export default {
             const user = authResult.user
             const reUid = user.uid
             const obj = {
-              email: user.email,
+              //email: user.email,
               displayName: user.displayName,
               photoURL: user.photoURL
             }
@@ -55,11 +57,11 @@ export default {
             }else{
               db.ref('users/' + reUid).on('value', (snapshot) => {
                 let result = snapshot.val()
-                obj.email = result.email
+                //obj.email = result.email
                 obj.displayName = result.displayName
                 obj.photoURL = result.photoURL===null ? obj.photoURL : result.photoURL
-                obj.follow = result.follow
-                obj.followed = result.followed
+                obj.follow = result.follow===null ? {} : result.follow
+                obj.followed = result.followed===null ? {} : result.followed
 
                 console.log(result)
                 console.log(obj)

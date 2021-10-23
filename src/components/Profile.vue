@@ -48,7 +48,7 @@ import firebase from '../plugins/firebase'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import * as commonJS from '../plugins/common'
-import { attachImage, upload } from '../plugins/auth'
+import { attachImage } from '../plugins/auth'
 
 import BoadList from './BoadList.vue'
 
@@ -135,17 +135,20 @@ export default {
       // upload(data.uploadImageUrl, 'test.png').then(() => {
       //   // 画像をアップロードしました
       // })
-      attachImage(data.input_image, "test/")
+      const _directory = data.store.state.uid + "/"
+      attachImage(data.input_image, _directory)
 
-
-      data.store.state.photoURL = data.user_data.photoURL = data.mdUser_data.photoURL ? data.mdUser_data.photoURL : commonJS.PHOTO_URL_DFT
-      data.store.state.displayName = data.user_data.displayName = data.mdUser_data.displayName
+      data.user_data.photoURL = data.mdUser_data.photoURL ? data.mdUser_data.photoURL : commonJS.PHOTO_URL_DFT
+      data.user_data.displayName = data.mdUser_data.displayName
       data.user_data.profile = data.mdUser_data.profile
       data.user_data.place = data.mdUser_data.place
       data.user_data.siteURL = data.mdUser_data.siteURL
       console.log(data.user_data)
       db.ref('users/'+data.store.state.uid).update(data.user_data, (error) => {
         if (!error) {
+          console.log(data.store.state)
+          data.store.dispatch("auth", data.user_data)
+          console.log(data.store.state)
           console.log('プロフィールを更新しました')
         }
       })
@@ -156,23 +159,32 @@ export default {
 
     //フォロー
     const toggle_follow = (e)=> {
-      let _elm=e.currentTarget
+      const _elm=e.currentTarget
+      const _elmUser=_elm.getAttribute('data-user')
+      const _myFollow=data.store.state.follow?data.store.state.follow:{}
+      // フォーロー済みのとき：フォローをやめる
       if(_elm.classList.contains('on')){
         db.ref('users/').update({
-          [data.store.state.uid+'/follow/'+_elm.getAttribute('data-user')]: null,
-          [_elm.getAttribute('data-user')+'/followed/'+data.store.state.uid]: null,
+          [data.store.state.uid+'/follow/'+_elmUser]: null,
+          [_elmUser+'/followed/'+data.store.state.uid]: null,
         }, (error) => {
           if (!error) {
-            data.store.state.follow=
+            delete data.user_data.followed[_elmUser]
+            delete _myFollow[_elmUser]
+            data.store.dispatch("authFollow", _myFollow)
             _elm.classList.remove('on')
           }
         })
+      // フォーローしていないとき：フォローする
       }else{
         db.ref('users/').update({
-          [data.store.state.uid+'/follow/'+_elm.getAttribute('data-user')]: 1,
-          [_elm.getAttribute('data-user')+'/followed/'+data.store.state.uid]: 1,
+          [data.store.state.uid+'/follow/'+_elmUser]: 1,
+          [_elmUser+'/followed/'+data.store.state.uid]: 1,
         }, (error) => {
           if (!error) {
+            data.user_data.followed[_elmUser]=1
+            _myFollow[_elmUser]=1
+            data.store.dispatch("authFollow", _myFollow)
             _elm.classList.add('on')
           }
         })
