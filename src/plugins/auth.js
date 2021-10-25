@@ -22,17 +22,22 @@ export function auth () {
 
 /**
  * 画像をアップロードします
- * @param inputFile ファイル
- * @param directory ディレクトリ
+ * @param {Object} obj
+ * @param obj.inputFile ファイル
+ * @param {String} obj.directory ディレクトリ
+ * @param {String} [obj.fileName] 登録するファイル名（任意）
+ * @param {Function} [obj.resultFnc] アップロード成功後に実行する処理（任意）
  */
-export function attachImage(inputFile, directory) {
-  const file = inputFile
-  if(!file || !directory) {
-    return;
+export function attachImage(obj) {
+  const file = obj.inputFile
+  if(!file || !obj.directory) {
+    return
   }
-  console.log(`file.name= ${file.name}`)
-
-  const uploadTask = firebase.storage().ref().child(`${directory}${file.name}`).put(file)
+  let _fileName = file.name
+  if(obj.fileName && _fileName.lastIndexOf('.') > 0){
+    _fileName = obj.fileName + '.' +  _fileName.split('.').pop()
+  }
+  const uploadTask = firebase.storage().ref().child(`${obj.directory}${_fileName}`).put(file)
   uploadTask.on('state_changed',
     (snapshot) => {
       // 成功時の処理
@@ -44,6 +49,8 @@ export function attachImage(inputFile, directory) {
     () => {
       uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
         // ファイルアップロードして使えるようになったときの処理
+        obj.resultFnc(downloadURL)
+        //console.log('File available at', downloadURL)
       })
     }
   )

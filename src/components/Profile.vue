@@ -22,7 +22,8 @@
           <div class="upload">
             <p v-if="data.uploadImageUrl" class="photo"><img :src="data.uploadImageUrl" alt="" width="100"></p>
             <p v-else class="photo"><img :src="data.mdUser_data.photoURL" alt="" width="100"></p>
-            <input type="file" accept="image/*" show-size @change="onImagePicked">
+            <input type="file" accept="image/*" name="inputProfileFile" show-size @change="onImagePicked">
+            <input type="button" value="クリア" @click="clearFileInput">
           </div>
           <dl>
             <dt>名前（必須）</dt>
@@ -103,22 +104,19 @@ export default {
       }else{
         data.modalOpen = false
         data.mdUser_data = null
+        data.uploadImageUrl = ""
+        data.input_image = null
       }
     }
 
     //プロフィール写真のアップロード
-    const submit = ()=> {
-      
-    }
-    
     const onImagePicked = (e)=>{
       const file = e.target.files[0]
-      // console.log(e.target.files[0].name)
       if (file !== undefined && file !== null) {
-        if (file.name.lastIndexOf('.') <= 0) {
+        if (file.name.lastIndexOf('.') < 0) {
           return
         }
-        data.input_image=file
+        data.input_image = file
         const fr = new FileReader()
         fr.readAsDataURL(file)
         fr.addEventListener('load', () => {
@@ -126,34 +124,48 @@ export default {
         })
       } else {
         data.uploadImageUrl = ''
+        data.input_image = null
       }
     }
-
+    //input:fileのクリアボタン
+    const clearFileInput = ()=>{
+      document.getElementsByName('inputProfileFile')[0].value = ''
+      data.uploadImageUrl = ''
+      data.input_image = null
+    }
 
     //プロフィールの編集　保存
     const editProfile = ()=> {
-      // upload(data.uploadImageUrl, 'test.png').then(() => {
-      //   // 画像をアップロードしました
-      // })
-      const _directory = data.store.state.uid + "/"
-      attachImage(data.input_image, _directory)
-
-      data.user_data.photoURL = data.mdUser_data.photoURL ? data.mdUser_data.photoURL : commonJS.PHOTO_URL_DFT
       data.user_data.displayName = data.mdUser_data.displayName
       data.user_data.profile = data.mdUser_data.profile
       data.user_data.place = data.mdUser_data.place
       data.user_data.siteURL = data.mdUser_data.siteURL
-      console.log(data.user_data)
-      db.ref('users/'+data.store.state.uid).update(data.user_data, (error) => {
-        if (!error) {
-          console.log(data.store.state)
-          data.store.dispatch("auth", data.user_data)
-          console.log(data.store.state)
-          console.log('プロフィールを更新しました')
-        }
-      })
-      data.modalOpen = false
-      data.mdUser_data = null
+
+      if(data.input_image){
+        attachImage({
+          inputFile: data.input_image,
+          directory: data.store.state.uid + '/profile/',
+          fileName: 'profile',
+          resultFnc: (downloadURL)=>{
+            // console.log('File available at', downloadURL)
+            data.user_data.photoURL = downloadURL
+            db.ref('users/'+data.store.state.uid).update(data.user_data, (error) => {
+              if (!error) {
+                data.store.dispatch("auth", data.user_data)
+                console.log('プロフィールを更新しました_画像更新あり')
+              }
+            })
+          }
+        })
+      }else{
+        db.ref('users/'+data.store.state.uid).update(data.user_data, (error) => {
+          if (!error) {
+            data.store.dispatch("auth", data.user_data)
+            console.log('プロフィールを更新しました_画像更新なし')
+          }
+        })
+      }
+      toggle_editWin()
       return false
     }
 
@@ -199,7 +211,7 @@ export default {
         data.router.push('/signin')
       }
     })
-    return { props, data, init, toggle_editWin, onImagePicked, editProfile, toggle_follow }
+    return { props, data, init, toggle_editWin, onImagePicked, clearFileInput, editProfile, toggle_follow }
   },
 }
 </script>
