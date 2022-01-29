@@ -12,6 +12,7 @@
       <span v-else class="like-cnt">0</span>
     </li>
   </ul>
+  <button v-if="data.infinitLoadNext" @click="loadMore">もっと見る</button>
 </template>
 
 <script>
@@ -39,35 +40,49 @@ export default {
     numPerPage: {
       type: Number,
       default: commonJS.NUM_PER_PAGE
+    },
+    infinitLoad: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props) {
     const data = reactive({
       board_data: {},
       message: "",
+      infinitLoadNext: false,
+      infinitLoadLastKey: "",
       router: useRouter(),
       store: useStore()
     })
 
+    // 表示のための設定?
+    let set_db
+    let arr = []
+    let xMkBoardArr = (snapshot)=>{
+      let result = snapshot.val()
+      let resulArr = []
+      for(let item in result){
+        result[item].key=item
+        let like=result[item].like
+        if(like && like[data.store.state.uid]){
+          result[item].likeOn=true
+        }else{
+          result[item].likeOn=false
+        }
+        resulArr.unshift(result[item])
+      }
+      arr = arr.concat(resulArr)
+    }
+
     // 初期表示
     const init = ()=> {
-      let set_db
-      let arr = []
-      let xMkBoardArr = (snapshot)=>{
-        let result = snapshot.val()
-        for(let item in result){
-          result[item].key=item
-          let like=result[item].like
-          if(like && like[data.store.state.uid]){
-            result[item].likeOn=true
-          }else{
-            result[item].likeOn=false
-          }
-          arr.unshift(result[item])
-        }
+      if(props.infinitLoad){
+        data.infinitLoadNext = true
       }
 
       if(props.equalToObj!==undefined){
+        // フォローしているユーザーの投稿
         console.log("BoadList1")
         if(!props.equalToObj){
           data.message="フォローしているユーザーがいません"
@@ -84,9 +99,11 @@ export default {
         })
       }else{
         if(props.orderBy==='key'){
+          // 全投稿
           console.log("BoadList2")
           set_db = db_board.orderByKey().limitToLast(props.numPerPage)
         }else{
+          // 特定の1ユーザーの投稿
           if(!props.equalTo){
             data.message="ユーザーが読み込めませんでした"
             return
@@ -95,13 +112,30 @@ export default {
           console.log(props.equalToObj)
           set_db = db_board.orderByChild(props.orderBy).equalTo(props.equalTo).limitToLast(props.numPerPage)
         }
-        set_db.on('value', (snapshot)=> {
-          arr = []
-          xMkBoardArr(snapshot)
-          data.board_data = arr
-          setName()
-        })
+        setBoadDateAll(set_db)
       }
+    }
+
+    //メッセージを出力
+    const setBoadDateAll = (_db)=>{
+      _db.on('value', (snapshot)=> {
+        xMkBoardArr(snapshot)
+        if(data.infinitLoadNext){
+          if(arr.length === props.numPerPage){
+            data.infinitLoadLastKey = arr[arr.length - 1].key
+          }else{
+            data.infinitLoadNext = false
+          }
+        }
+        data.board_data = arr
+        setName()
+      })
+    }
+
+    //もっと見る
+    const loadMore = ()=>{
+      set_db = db_board.orderByKey().endAt(data.infinitLoadLastKey).limitToLast(props.numPerPage)
+      setBoadDateAll(set_db)
     }
 
     //ユーザー名を表示
@@ -138,7 +172,7 @@ export default {
     nextTick(()=> {
       init()
     })
-    return { props, data, init, toggle_like }
+    return { props, data, init, loadMore, toggle_like }
   },
 }
 </script>

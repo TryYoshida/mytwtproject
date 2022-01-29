@@ -6,7 +6,7 @@
 Demo User: test@example.com / 1234
 
 ## 今やっていること
-- FirebaseのDBルール変えたので何か変になったら確認（個人情報になるemailはDBに保存しないことにする）
+- メッセージを指定個数ずつ読み込む（初期値10）を実装中。全ユーザーの最新の投稿のみ設置済み（まだ自動じゃなくて手動）
 
 ## バグ
 - ログアウトボタンをクリックでエラー（deployしたやつは「No redirect URL has been found. You must either specify a signInSuccessUrl in the configuration, pass in a redirect URL to the widget URL, or return false from the callback.  >Dismiss」というエラーメッセージが/signinに移動後にポップアップされる）

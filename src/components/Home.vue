@@ -19,7 +19,7 @@
       <h3 class="my-3">フォロー中のユーザーの投稿</h3>
       <BoadList orderBy="user" :equalToObj="data.store.state.follow" />
       <h3 class="my-3">全ユーザーの最新の投稿</h3>
-      <BoadList orderBy="key" />
+      <BoadList orderBy="key" infinitLoad />
     </div>
     <div v-else>
       <div class="alert alert-warning">
@@ -53,10 +53,8 @@ export default {
       message: 'ミニ伝言板。最新の投稿を表示します。',
       msg: '',
       msg_maxlength: commonJS.MESSAGE_MAX_LENGTH,
-
-      uploadImageUrl: "",//photoアップロード関連
-      input_image:null,//photoアップロード関連
-
+      uploadImageUrl: "",
+      input_image:null,
       router: useRouter(),
       store: useStore()
     })
