@@ -118,7 +118,7 @@ export default {
 
     //メッセージを出力
     const setBoadDateAll = (_db)=>{
-      _db.on('value', (snapshot)=> {
+      _db.once('value', (snapshot)=> {
         xMkBoardArr(snapshot)
         if(data.infinitLoadNext){
           if(arr.length === props.numPerPage){
@@ -132,9 +132,14 @@ export default {
       })
     }
 
+    //親から実行、テスト
+    const childMethod = () => {
+      alert("child")
+    }
+
     //もっと見る
     const loadMore = ()=>{
-      set_db = db_board.orderByKey().endAt(data.infinitLoadLastKey).limitToLast(props.numPerPage)
+      set_db = db_board.orderByKey().endBefore(data.infinitLoadLastKey).limitToLast(props.numPerPage)
       setBoadDateAll(set_db)
     }
 

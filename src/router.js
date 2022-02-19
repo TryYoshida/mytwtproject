@@ -8,6 +8,8 @@ import Home from './components/Home.vue'
 import Profile from './components/Profile.vue'
 import NotFound from './components/NotFound.vue'
 
+const db = firebase.database()
+
 export const router=createRouter({
   history:createWebHistory(),
   routes:[
@@ -49,11 +51,10 @@ router.beforeEach(async (to, from, next) => {
   if(!user){
     user = await auth()
     if(user){
-      store.dispatch("auth", {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL
+      db.ref('users/'+ user.uid).once('value', (snapshot)=> {
+        const user_data = snapshot.val()
+        user_data.uid = user.uid
+        store.dispatch("auth", user_data)
       })
     }
   }
