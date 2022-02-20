@@ -40,17 +40,13 @@ export default {
     numPerPage: {
       type: Number,
       default: commonJS.NUM_PER_PAGE
-    },
-    infinitLoad: {
-      type: Boolean,
-      default: false
     }
   },
   setup(props) {
     const data = reactive({
       board_data: {},
       message: "",
-      infinitLoadNext: false,
+      infinitLoadNext: true,
       infinitLoadLastKey: "",
       router: useRouter(),
       store: useStore()
@@ -60,87 +56,127 @@ export default {
     let set_db
     let arr = []
     let xMkBoardArr = (snapshot)=>{
-      let result = snapshot.val()
-      let resulArr = []
-      for(let item in result){
-        result[item].key=item
-        let like=result[item].like
-        if(like && like[data.store.state.uid]){
-          result[item].likeOn=true
+      let resulArr = setLike(snapshot.val())
+      if(data.infinitLoadNext){
+        if(resulArr.length === props.numPerPage){
+          data.infinitLoadLastKey = resulArr[resulArr.length - 1].key
         }else{
-          result[item].likeOn=false
+          data.infinitLoadNext = false
         }
-        resulArr.unshift(result[item])
       }
       arr = arr.concat(resulArr)
     }
 
     // 初期表示
     const init = ()=> {
-      if(props.infinitLoad){
-        data.infinitLoadNext = true
-      }
-
       if(props.equalToObj!==undefined){
         // フォローしているユーザーの投稿
-        console.log("BoadList1")
         if(!props.equalToObj){
+          data.infinitLoadNext=false
           data.message="フォローしているユーザーがいません"
           return
         }
-        arr = []
         Object.keys(props.equalToObj).forEach(function (key) {
-          set_db = db_board.orderByChild(props.orderBy).equalTo(key).limitToLast(props.numPerPage)
-          set_db.on('value', (snapshot)=> {
-            xMkBoardArr(snapshot)
-            data.board_data = arr
-            setName()
-          })
+          set_db = db_board.orderByChild(props.orderBy).equalTo(key)
+          setBoadDateFollowAll(set_db)
         })
+      } else if(props.orderBy==='key'){
+        // 全投稿
+        set_db = db_board.orderByKey().limitToLast(props.numPerPage)
+        setBoadDate(set_db)
       }else{
-        if(props.orderBy==='key'){
-          // 全投稿
-          console.log("BoadList2")
-          set_db = db_board.orderByKey().limitToLast(props.numPerPage)
-        }else{
-          // 特定の1ユーザーの投稿
-          if(!props.equalTo){
-            data.message="ユーザーが読み込めませんでした"
-            return
-          }
-          console.log("BoadList3")
-          console.log(props.equalToObj)
-          set_db = db_board.orderByChild(props.orderBy).equalTo(props.equalTo).limitToLast(props.numPerPage)
+        // 特定の1ユーザーの投稿
+        if(!props.equalTo){
+          data.infinitLoadNext=false
+          data.message="ユーザーが読み込めませんでした"
+          return
         }
-        setBoadDateAll(set_db)
+        set_db = db_board.orderByChild(props.orderBy).equalTo(props.equalTo)
+        setBoadDateSingleUserAll(set_db)
       }
     }
 
-    //メッセージを出力
-    const setBoadDateAll = (_db)=>{
+    //メッセージを出力（全投稿）
+    const setBoadDate = (_db)=>{
       _db.once('value', (snapshot)=> {
-        xMkBoardArr(snapshot)
+        let resulArr = setLike(snapshot.val())
         if(data.infinitLoadNext){
-          if(arr.length === props.numPerPage){
-            data.infinitLoadLastKey = arr[arr.length - 1].key
+          if(resulArr.length === props.numPerPage){
+            data.infinitLoadLastKey = resulArr[resulArr.length - 1].key
           }else{
             data.infinitLoadNext = false
           }
         }
+        arr = arr.concat(resulArr)
         data.board_data = arr
         setName()
       })
     }
 
-    //親から実行、テスト
-    const childMethod = () => {
-      alert("child")
+    //メッセージを出力（フォローしているユーザーの投稿用）
+    let followArr = []
+    let followInfinitLoadLastNum = props.numPerPage
+    const setBoadDateFollow = (followArr)=>{
+      arr = followArr.slice(0, followInfinitLoadLastNum)
+      if(data.infinitLoadNext){
+        if(arr.length === followArr.length){
+          data.infinitLoadNext = false
+        }
+      }
+      data.board_data = arr
+      setName()
+    }
+    const setBoadDateFollowAll = (_db)=>{
+      _db.once('value', (snapshot)=> {
+        let resulArr = setLike(snapshot.val())
+        followArr = followArr.concat(resulArr).sort((a, b)=>{
+          if (a.key < b.key) {
+            return 1
+          }
+          if (a.key > b.key) {
+            return -1
+          }
+          return 0
+        })
+        setBoadDateFollow(followArr)
+      })
+    }
+
+    //メッセージを出力（特定の1ユーザーの投稿）
+    let singleUserArr = []
+    let singleUserInfinitLoadLastNum = props.numPerPage
+    const setBoadDateSingleUser = (singleUserArr)=>{
+      arr = singleUserArr.slice(0, singleUserInfinitLoadLastNum)
+      if(data.infinitLoadNext){
+        if(arr.length === singleUserArr.length){
+          data.infinitLoadNext = false
+        }
+      }
+      data.board_data = arr
+      setName()
+    }
+    const setBoadDateSingleUserAll = (_db)=>{
+      _db.once('value', (snapshot)=> {
+        singleUserArr = setLike(snapshot.val())
+        setBoadDateSingleUser(singleUserArr)
+      })
     }
 
     //もっと見る
     const loadMore = ()=>{
-      set_db = db_board.orderByKey().endBefore(data.infinitLoadLastKey).limitToLast(props.numPerPage)
-      setBoadDateAll(set_db)
+      // フォローしているユーザーの投稿
+      if(props.equalToObj){
+        followInfinitLoadLastNum += props.numPerPage
+        setBoadDateFollow(followArr)
+      }else if(props.orderBy==='key'){
+        // 全投稿
+        set_db = db_board.orderByKey().endBefore(data.infinitLoadLastKey).limitToLast(props.numPerPage)
+        setBoadDate(set_db)
+      }else{
+        // 特定の1ユーザーの投稿
+        singleUserInfinitLoadLastNum += props.numPerPage
+        setBoadDateSingleUser(singleUserArr)
+      }
     }
 
     //ユーザー名を表示
@@ -152,15 +188,33 @@ export default {
       })
     }
 
-    // いいねボタン
+    // いいねボタンの表示
+    const setLike = (items)=>{
+      let resulArr = []
+      for(let item in items){
+        items[item].key=item
+        let like=items[item].like
+        if(like && like[data.store.state.uid]){
+          items[item].likeOn=true
+        }else{
+          items[item].likeOn=false
+        }
+        resulArr.unshift(items[item])
+      }
+      return resulArr
+    }
+    
+    // いいねボタンクリック時の処理
     const toggle_like = (e)=> {
-      let _elm=e.currentTarget
+      const _elm=e.currentTarget
+      const _cntElm=_elm.nextElementSibling
       if(_elm.classList.contains('on')){
         db.ref('board/'+_elm.getAttribute('data-id')+'/like').update({
           [data.store.state.uid]: null,
         }, (error) => {
           if (!error) {
             _elm.classList.remove('on')
+            _cntElm.textContent = Number(_cntElm.textContent)-1
           }
         })
       }else{
@@ -169,6 +223,7 @@ export default {
         }, (error) => {
           if (!error) {
             _elm.classList.add('on')
+            _cntElm.textContent = Number(_cntElm.textContent)+1
           }
         })
       }

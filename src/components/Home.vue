@@ -19,7 +19,7 @@
       <h3 class="my-3">フォロー中のユーザーの投稿</h3>
       <BoadList orderBy="user" :equalToObj="data.store.state.follow" />
       <h3 class="my-3">全ユーザーの最新の投稿</h3>
-      <BoadList orderBy="key" infinitLoad />
+      <BoadList orderBy="key" />
     </div>
     <div v-else>
       <div class="alert alert-warning">
