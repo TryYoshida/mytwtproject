@@ -160,7 +160,7 @@ export default {
       if (data.store.state.uid){
         init()
       }else{
-        data.message='ログイン情報が確認できませんでした'
+        data.message='ログイン情報が確認できませんでした（onMounted）'
         data.router.push('/signin')
       }
     })

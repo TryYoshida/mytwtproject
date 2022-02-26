@@ -6,7 +6,7 @@
 Demo User: test@example.com
 
 ## 今やっていること
-- プロフィールページで画像がデフォルトのとき？指定しないとき？に保存するとURLにパラメータ（?inputProfileFile=）が入ってリダイレクトされてしまい保存できない不具合を調査・解消
+- メッセージを投稿したときに一覧に反映されるようにする（もっと見るボタン設置の関係で、データベースの読み込みをonceにしたため、自動では同期されなくなった）
 
 ## バグ
 - ログアウトボタンをクリックでエラー（deployしたやつは「No redirect URL has been found. You must either specify a signInSuccessUrl in the configuration, pass in a redirect URL to the widget URL, or return false from the callback.  >Dismiss」というエラーメッセージが/signinに移動後にポップアップされる）

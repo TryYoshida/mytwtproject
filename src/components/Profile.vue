@@ -18,7 +18,7 @@
   <teleport to="body">
     <div v-if="data.modalOpen" class="modal">
       <div>
-        <form action="" @submit="editProfile">
+        <!-- <form action="" @submit="editProfile"> -->
           <div class="upload">
             <p v-if="data.uploadImageUrl" class="photo"><img :src="data.uploadImageUrl" alt="" width="100"></p>
             <p v-else class="photo"><img :src="data.mdUser_data.photoURL" alt="" width="100"></p>
@@ -36,8 +36,8 @@
             <dd><input type="url" v-model="data.mdUser_data.siteURL" class="form-control"></dd>
           </dl>
           <button @click="toggle_editWin" type="button" class="btn btn-primary">閉じる</button>
-          <button class="btn btn-primary">保存</button>
-        </form>
+          <button @click="editProfile" type="button" class="btn btn-primary">保存</button>
+        <!-- </form> -->
       </div>
     </div>
   </teleport>
@@ -137,9 +137,15 @@ export default {
     //プロフィールの編集　保存
     const editProfile = ()=> {
       data.user_data.displayName = data.mdUser_data.displayName
-      data.user_data.profile = data.mdUser_data.profile
-      data.user_data.place = data.mdUser_data.place
-      data.user_data.siteURL = data.mdUser_data.siteURL
+      if(data.mdUser_data.profile !== undefined){
+       data.user_data.profile = data.mdUser_data.profile
+      }
+      if(data.mdUser_data.place !== undefined){
+        data.user_data.place = data.mdUser_data.place
+      }
+      if(data.mdUser_data.siteURL !== undefined){
+        data.user_data.siteURL = data.mdUser_data.siteURL
+      }
 
       if(data.input_image){
         attachImage({
@@ -152,7 +158,7 @@ export default {
             db.ref('users/'+data.store.state.uid).update(data.user_data, (error) => {
               if (!error) {
                 data.store.dispatch("auth", data.user_data)
-                console.log('プロフィールを更新しました_画像更新あり')
+                // console.log('プロフィールを更新しました_画像更新あり')
               }
             })
           }
@@ -161,7 +167,7 @@ export default {
         db.ref('users/'+data.store.state.uid).update(data.user_data, (error) => {
           if (!error) {
             data.store.dispatch("auth", data.user_data)
-            console.log('プロフィールを更新しました_画像更新なし')
+            // console.log('プロフィールを更新しました_画像更新なし')
           }
         })
       }
@@ -194,6 +200,9 @@ export default {
           [_elmUser+'/followed/'+data.store.state.uid]: 1,
         }, (error) => {
           if (!error) {
+            if(data.user_data.followed===undefined){
+              data.user_data.followed={}
+            }
             data.user_data.followed[_elmUser]=1
             _myFollow[_elmUser]=1
             data.store.dispatch("authFollow", _myFollow)

@@ -32,6 +32,7 @@ export default {
     onMounted(()=> {
       const uiConfig = {
         callbacks: {
+          signInSuccess: () => false,
           signInSuccessWithAuthResult: function(authResult, redirectUrl) {
             // console.log(authResult.additionalUserInfo.isNewUser)
             // console.log(authResult.getUser())
@@ -73,7 +74,7 @@ export default {
             // リダイレクト前のページに戻る、上手くいかない いってる??
             data.router.push(data.route.query.redirect || '/')
 
-            return true;
+            return false
           },
           uiShown: function() {
             // The widget is rendered.
