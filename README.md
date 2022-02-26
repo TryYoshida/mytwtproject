@@ -6,10 +6,11 @@
 Demo User: test@example.com
 
 ## 今やっていること
-- メッセージを投稿したときに一覧に反映されるようにする（もっと見るボタン設置の関係で、データベースの読み込みをonceにしたため、自動では同期されなくなった）
+- これから見た目を整える
 
 ## バグ
-- ログアウトボタンをクリックでエラー（deployしたやつは「No redirect URL has been found. You must either specify a signInSuccessUrl in the configuration, pass in a redirect URL to the widget URL, or return false from the callback.  >Dismiss」というエラーメッセージが/signinに移動後にポップアップされる）
+- ログイン・ログアウト時に出るエラー　Error: Missing required param "prmUid"
+- ~~ログアウトボタンをクリックでエラー（deployしたやつは「No redirect URL has been found. You must either specify a signInSuccessUrl in the configuration, pass in a redirect URL to the widget URL, or return false from the callback.  >Dismiss」というエラーメッセージが/signinに移動後にポップアップされる）~~
 - ~~ログイン後、初期表示時（ブラウザの更新時はでない）に、Homeの`<BoadList orderBy="user" :equalToObj="data.store.state.follow" />`のequalToObjがundefinedになる。（BoadListをonMounted→nextTickにしたら途中で止まらなくなるけど、undefinedにはなるまま）症状いま↓に~~
 - ~~フォロー中のユーザーの投稿の表示がログイン後読み込めない（BoadList.vueでprops.equalToObjがnullになる、undefinedではない）、再読み込みだといけるを要修正~~
 - 画像を変更したときやフォローを追加解除したときなど、Signin.vue:66,67のログが出力されている？意図せずSigninを読みにいっている？？

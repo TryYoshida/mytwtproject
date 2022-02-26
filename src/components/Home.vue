@@ -19,7 +19,7 @@
       <h3 class="my-3">フォロー中のユーザーの投稿</h3>
       <BoadList orderBy="user" :equalToObj="data.store.state.follow" />
       <h3 class="my-3">全ユーザーの最新の投稿</h3>
-      <BoadList orderBy="key" />
+      <BoadList orderBy="key" ref="bordAll" />
     </div>
     <div v-else>
       <div class="alert alert-warning">
@@ -58,6 +58,9 @@ export default {
       router: useRouter(),
       store: useStore()
     })
+
+    //子実行テスト
+    const bordAll = ref(null)
 
     // 初期表示
     const init = ()=> {
@@ -127,7 +130,7 @@ export default {
         user: data.store.state.uid,
         posted: dstr,
       }
-      
+
       if(data.input_image){
         attachImage({
           inputFile: data.input_image,
@@ -139,18 +142,20 @@ export default {
             data.msg = ''
             clearFileInput()
             data.message = '投稿しました。'
+            bordAll.value.addNew()
           }
         })
       }else{
         db_board.push(obj)
         data.msg = ''
         data.message = '投稿しました。'
+        bordAll.value.addNew()
       }
     }
 
     // メッセージが入力されたとき
     const addBtn_disabled=computed(()=>{
-      return data.msg.length===0 || data.msg.length>data.msg_maxlength?true:false
+      return (data.msg.length===0 && !data.input_image) || data.msg.length>data.msg_maxlength?true:false
     }) 
     const msg_cntOver=computed(()=>{
       return data.msg.length>data.msg_maxlength?true:false
@@ -164,7 +169,7 @@ export default {
         data.router.push('/signin')
       }
     })
-    return { data, init, doLogout, onImagePicked, clearFileInput, add, addBtn_disabled, msg_cntOver }
+    return { data, init, doLogout, onImagePicked, clearFileInput, add, addBtn_disabled, msg_cntOver, bordAll }
   },
 }
 </script>

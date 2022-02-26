@@ -229,10 +229,23 @@ export default {
       }
     }
 
+    // メッセージが投稿されたとき（親から実行）
+    const addNew = ()=>{
+      if(props.orderBy==='key'){
+        // 全投稿
+        db_board.orderByKey().limitToLast(1).once('value', (snapshot)=> {
+          let resulArr = setLike(snapshot.val())
+          arr = resulArr.concat(arr)
+          data.board_data = arr
+          setName()
+        })
+      }
+    }
+
     nextTick(()=> {
       init()
     })
-    return { props, data, init, loadMore, toggle_like }
+    return { props, data, init, loadMore, toggle_like, addNew }
   },
 }
 </script>
