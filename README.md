@@ -6,7 +6,8 @@
 Demo User: test@example.com
 
 ## 今やっていること
-- これから見た目を整える
+- 見た目を整える！自力で
+- Vuetifyを試す→Vue3まだ非対応でした…
 
 ## バグ
 - ログイン・ログアウト時に出るエラー　Error: Missing required param "prmUid"
