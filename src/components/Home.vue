@@ -1,32 +1,29 @@
 <template>
-  <section>
-    <div class="alert h6 text-right"><button @click="doLogout" class="btn btn-primary">ログアウト</button></div>
-    <h2>ホーム<br>
-      <router-link :to="{name:'Profile',params:{prmUid:$store.state.uid}}">{{ $store.state.displayName }} さん <img :src="$store.state.photoURL" alt="" width="100"></router-link></h2>
-    <p class="h5">{{data.message}}</p>
-    <div v-if="$store.state.uid" class="alert alert-primary">
-      <div class="form-group text-left" :class={msgOver:msg_cntOver}>
-        <label class="h5">Message</label>
-        <textarea v-model.trim="data.msg" rows="5" class="form-control" placeholder="What’s happening"></textarea>
-        <p class="msg-counter"><span>{{data.msg.length}}</span>/{{data.msg_maxlength}}</p>
-        <div class="upload">
-          <p class="photo"><img :src="data.uploadImageUrl" alt="" width="100"></p>
-          <input type="file" accept="image/*" name="inputProfileFile" show-size @change="onImagePicked">
-          <input type="button" value="クリア" @click="clearFileInput">
-        </div>
-        <button @click="add" :disabled="addBtn_disabled" class="btn btn-primary">投稿</button>
+  <h1>ホーム<br>
+    <router-link :to="{name:'Profile',params:{prmUid:$store.state.uid}}">{{ $store.state.displayName }} さん <img :src="$store.state.photoURL" alt="" width="100"></router-link></h1>
+  <p class="h5">{{data.message}}</p>
+  <div v-if="$store.state.uid" class="alert alert-primary">
+    <div class="form-group text-left" :class={msgOver:msg_cntOver}>
+      <label class="h5">Message</label>
+      <textarea v-model.trim="data.msg" rows="5" class="form-control" placeholder="What’s happening"></textarea>
+      <p class="msg-counter"><span>{{data.msg.length}}</span>/{{data.msg_maxlength}}</p>
+      <div class="upload">
+        <p class="photo"><img :src="data.uploadImageUrl" alt="" width="100"></p>
+        <input type="file" accept="image/*" name="inputProfileFile" show-size @change="onImagePicked">
+        <input type="button" value="クリア" @click="clearFileInput">
       </div>
-      <h3 class="my-3">フォロー中のユーザーの投稿</h3>
-      <BoadList orderBy="user" :equalToObj="data.store.state.follow" />
-      <h3 class="my-3">全ユーザーの最新の投稿</h3>
-      <BoadList orderBy="key" ref="bordAll" />
+      <button @click="add" :disabled="addBtn_disabled" class="btn btn-primary">投稿</button>
     </div>
-    <div v-else>
-      <div class="alert alert-warning">
-        ※現在、ログインされていません。
-      </div>
+    <h3 class="my-3">フォロー中のユーザーの投稿</h3>
+    <BoadList orderBy="user" :equalToObj="data.store.state.follow" />
+    <h3 class="my-3">全ユーザーの最新の投稿</h3>
+    <BoadList orderBy="key" ref="bordAll" />
+  </div>
+  <div v-else>
+    <div class="alert alert-warning">
+      ※現在、ログインされていません。
     </div>
-  </section>
+  </div>
 </template>
 
 <script>
@@ -67,27 +64,6 @@ export default {
       data.message = 'ログインしました。'
     }
 
-    // ログアウト処理
-    const doLogout = ()=> {
-      logout().then(() => {
-        data.board_data = {}
-        data.store.dispatch("auth", {
-          uid: '',
-          //email: '',
-          displayName: '',
-          photoURL: '',
-          follow: null,
-          followed: null
-        })
-        data.message = 'ログアウトしました。'
-        data.router.push('/signin')
-      })
-      .catch((error) => {
-        // エラー処理をここで行う
-        console.log(error)
-      })
-    }
-    
     //写真のアップロード
     const onImagePicked = (e)=>{
       const file = e.target.files[0]
@@ -169,46 +145,7 @@ export default {
         data.router.push('/signin')
       }
     })
-    return { data, init, doLogout, onImagePicked, clearFileInput, add, addBtn_disabled, msg_cntOver, bordAll }
+    return { data, init, onImagePicked, clearFileInput, add, addBtn_disabled, msg_cntOver, bordAll }
   },
 }
 </script>
-
-<style>
-.msgOver textarea,
-.msgOver textarea:focus{
-  color: #d33;
-  background-color: #fafadf;
-}
-.msgOver .msg-counter>span{
-  color: #d33;
-  font-weight: bold;
-}
-.btn-like{
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  line-height: 1;
-  cursor: pointer;
-}
-.btn-like path{
-  fill: #d33;
-  stroke-width:50;
-  stroke: #d33;
-  fill-opacity: 0;
-  transform:scale(.9,.9);
-  transform-origin: center center;
-  transition: .3s;
-}
-.btn-like:hover path{
-  fill-opacity: .2;
-}
-.btn-like.on path{
-  fill-opacity: 1;
-}
-.like-cnt{
-  line-height: 20px;
-  display: inline-block;
-  padding-left: 5px;
-}
-</style>

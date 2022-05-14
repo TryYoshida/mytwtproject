@@ -6,7 +6,7 @@
 Demo User: test@example.com
 
 ## 今やっていること
-- 見た目を整える！自力で
+- developブランチで見た目を整える！
 - Vuetifyを試す→Vue3まだ非対応でした…
 
 ## バグ

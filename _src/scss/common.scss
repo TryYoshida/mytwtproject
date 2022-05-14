@@ -1,4 +1,151 @@
 @charset "utf-8";
-body{
-  background-color: #ccc;
+@import '_settings';
+// /*=============================================================
+// 	common style
+// =============================================================*/
+// /* reset style
+// -------------------------------------------------------------*/
+* {
+	padding: 0;
+	margin: 0;
+}
+section,article,aside,hgroup,header,footer,nav,figure,figcaption,summary,main {
+	display: block;
+	padding: 0;
+	margin: 0;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  color: $C_TEXT;
+  font: normal normal 16px/1 #{$FONT_BASE};
+  font-feature-settings: 'pwid';
+  letter-spacing: 0.04em;
+  background: $C_WHITE;
+  text-align: left;
+}
+ol,ul,dl,li,dt,dd {
+	list-style: none;
+}
+img {
+	vertical-align: top;
+}
+a,img {
+	border: none;
+}
+h1,h2,h3,h4,h5,h6 {
+	font-size: 100%;
+}
+sup,sub {
+	height: 0;
+	line-height: 1;
+	vertical-align: baseline;
+	margin: 0 1px;
+	position: relative;
+}
+sup {
+	bottom: 0.7ex;
+}
+sub {
+	top: 0.1ex;
+}
+
+// /* font
+// -------------------------------------------------------------*/
+
+// /* a Element
+// -------------------------------------------------------------*/
+a {
+	color: $C_LINK;
+	text-decoration: none;
+	transition: $TRANSITION_HOVER_BASE;
+	transition-property: color, background, opacity;
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+// /* block Layout
+// -------------------------------------------------------------*/
+img {
+	box-sizing: border-box;
+	max-width: 100%;
+	height: auto;
+	&.-border {
+		border: 1px solid $C_GRAY_LIGHT;
+	}
+}
+.pc {
+	&:not(.sp) {
+		@include mqMobile {
+			display: none !important;
+		}
+	}
+}
+.sp {
+	&:not(.pc) {
+		@include mqPc {
+			display: none !important;
+		}
+	}
+}
+.spP {
+	&:not(.pc) {
+		@include mqPc {
+			display: none !important;
+		}
+	}
+	@media only screen and (min-width: $BREAKE_POINT_MOBILE_PORTRAIT) and (max-width: $BREAKE_POINT_PC - 1px) {
+		display: none !important;
+	}
+}
+
+// /* container
+// -------------------------------------------------------------*/
+#container {
+	// overflow: hidden;
+  min-width: 320px;
+}
+
+// /* header
+// -------------------------------------------------------------*/
+
+
+// 移植しただけ
+.msgOver textarea,
+.msgOver textarea:focus{
+  color: #d33;
+  background-color: #fafadf;
+}
+.msgOver .msg-counter>span{
+  color: #d33;
+  font-weight: bold;
+}
+.btn-like{
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+.btn-like path{
+  fill: #d33;
+  stroke-width:50;
+  stroke: #d33;
+  fill-opacity: 0;
+  transform:scale(.9,.9);
+  transform-origin: center center;
+  transition: .3s;
+}
+.btn-like:hover path{
+  fill-opacity: .2;
+}
+.btn-like.on path{
+  fill-opacity: 1;
+}
+.like-cnt{
+  line-height: 20px;
+  display: inline-block;
+  padding-left: 5px;
 }
