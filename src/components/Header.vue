@@ -1,7 +1,7 @@
 <template>
   <header class="app-header">
     <div class="page-inner">
-      <p class="app-title">ミニ投稿アプリ（仮）</p>
+      <p class="app-title">MESSAGE BOARD mini</p>
       <div class="app-header__logout" v-if="data.isLogin"><button @click="doLogout" class="_button">Logout</button></div>
     </div>
   </header>

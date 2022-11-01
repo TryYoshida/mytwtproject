@@ -23,10 +23,11 @@ $C_GRAY_BG: map-get($COLOR_MAP, gray-lv4);
 $C_TEXT: map-get($COLOR_MAP, gray-lv1);
 $C_LINK: map-get($COLOR_MAP, key2);
 
-// FONT FAMILIY
-$FONT_BASE: 'Hiragino Kaku Gothic ProN', YuGothic, 'Yu Gothic Medium', '游ゴシック', 'Yu Gothic', Meiryo, sans-serif;
-$FONT_SERIF: 'Yu Mincho Demibold', 'YuMincho', 'Hiragino Mincho ProN W3', 'ヒラギノ明朝 ProN W3', 'Hiragino Mincho ProN', 'HG明朝E', serif;
-$FONT_SERIF_BOLD: 'Yu Mincho Demibold', 'YuMincho Demibold', 'Hiragino Mincho ProN W6', 'ヒラギノ明朝 ProN W6', 'Hiragino Mincho ProN', 'HG明朝E', serif;
+// fonts
+$FONT_BASE: 'Barlow', YuGothic, 'Yu Gothic Medium', 'Yu Gothic', 'Hiragino Kaku Gothic ProN', sans-serif;
+@mixin fontAccent {
+  font-family: 'Barlow Condensed', sans-serif;
+}
 
 // media
 $BREAKE_POINT_PC: 768px;

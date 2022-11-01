@@ -1,29 +1,38 @@
 <template>
-  <h1>ホーム<br>
-    <router-link :to="{name:'Profile',params:{prmUid:$store.state.uid}}">{{ $store.state.displayName }} さん <img :src="$store.state.photoURL" alt="" width="100"></router-link></h1>
-  <p class="h5">{{data.message}}</p>
-  <div v-if="$store.state.uid" class="alert alert-primary">
-    <div class="form-group text-left" :class={msgOver:msg_cntOver}>
-      <label class="h5">Message</label>
-      <textarea v-model.trim="data.msg" rows="5" class="form-control" placeholder="What’s happening"></textarea>
-      <p class="msg-counter"><span>{{data.msg.length}}</span>/{{data.msg_maxlength}}</p>
-      <div class="upload">
-        <p class="photo"><img :src="data.uploadImageUrl" alt="" width="100"></p>
-        <input type="file" accept="image/*" name="inputProfileFile" show-size @change="onImagePicked">
-        <input type="button" value="クリア" @click="clearFileInput">
+  <!-- <h1 class="page-title">Home</h1> -->
+  <template v-if="$store.state.uid">
+    <div class="home-header">
+      <div class="display-profile">
+        <router-link :to="{name:'Profile',params:{prmUid:$store.state.uid}}">
+          <p class="_name">Hello!<br><span class="_large">{{ $store.state.displayName }}</span> さん</p>
+          <div class="_image"><img :src="$store.state.photoURL" alt="" width="100"></div>
+        </router-link>
       </div>
-      <button @click="add" :disabled="addBtn_disabled" class="btn btn-primary">投稿</button>
+      <div class="message-form" :class={count_exceeded:msg_cntOver}>
+        <p class="_title">メッセージを投稿しよう！</p>
+        <textarea v-model.trim="data.msg" rows="5" placeholder="What’s happening"></textarea>
+        <p class="_counter"><span>{{data.msg.length}}</span>/{{data.msg_maxlength}}</p>
+        <div class="_button-set">
+          <div class="_upload">
+            <div class="_photo"><img :src="data.uploadImageUrl" alt="" width="100"></div>
+            <div class="_button-file"><span class="_text">投稿する画像を選択</span><input type="file" accept="image/*" name="inputProfileFile" show-size @change="onImagePicked"></div>
+            <input type="button" value="画像をクリア" @click="clearFileInput" class="_file-clear">
+          </div>
+          <button @click="add" :disabled="addBtn_disabled" class="_submit">投稿</button>
+        </div>
+        <p class="_text-done">{{data.message}}</p>
+      </div>
     </div>
     <h3 class="my-3">フォロー中のユーザーの投稿</h3>
     <BoadList orderBy="user" :equalToObj="data.store.state.follow" />
     <h3 class="my-3">全ユーザーの最新の投稿</h3>
     <BoadList orderBy="key" ref="bordAll" />
-  </div>
-  <div v-else>
+  </template>
+  <template v-else>
     <div class="alert alert-warning">
       ※現在、ログインされていません。
     </div>
-  </div>
+  </template>
 </template>
 
 <script>
@@ -47,7 +56,7 @@ export default {
   },
   setup(props) {
     const data = reactive({
-      message: 'ミニ伝言板。最新の投稿を表示します。',
+      message: '',
       msg: '',
       msg_maxlength: commonJS.MESSAGE_MAX_LENGTH,
       uploadImageUrl: "",
@@ -58,11 +67,6 @@ export default {
 
     //子実行テスト
     const bordAll = ref(null)
-
-    // 初期表示
-    const init = ()=> {
-      data.message = 'ログインしました。'
-    }
 
     //写真のアップロード
     const onImagePicked = (e)=>{
@@ -92,7 +96,6 @@ export default {
     // メッセージ追加
     const add = ()=> {
       if (!data.store.state.uid){
-        data.message='ログイン情報が確認できませんでした'
         data.router.push('/signin')
         return
       }
@@ -138,14 +141,11 @@ export default {
     })
 
     onMounted(()=> {
-      if (data.store.state.uid){
-        init()
-      }else{
-        data.message='ログイン情報が確認できませんでした（onMounted）'
+      if (!data.store.state.uid){
         data.router.push('/signin')
       }
     })
-    return { data, init, onImagePicked, clearFileInput, add, addBtn_disabled, msg_cntOver, bordAll }
+    return { data, onImagePicked, clearFileInput, add, addBtn_disabled, msg_cntOver, bordAll }
   },
 }
 </script>
