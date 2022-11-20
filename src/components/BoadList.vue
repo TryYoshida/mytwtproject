@@ -2,14 +2,16 @@
   <div v-if="data.message">
     <p>{{data.message}}</p>
   </div>
-  <ul v-else class="list-group text-left">
-    <li v-for="(item, key) in data.board_data" :key="key" class="list-group-item">
-      <div class="h5">{{item.msg}}</div>
-      <div class="image"><img :src="item.photoURL" alt="" width="100"></div>
-      <div class="small text-right"><router-link :to="{name:'Profile',params:{prmUid:item.user}}">{{item.displayName}}</router-link> ({{item.posted}})</div>
-      <span @click="toggle_like" class="btn-like" :class="{on:item.likeOn}" :data-id="item.key"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"/></svg></span>
-      <span v-if="item.like" class="like-cnt">{{Object.keys(item.like).length}}</span>
-      <span v-else class="like-cnt">0</span>
+  <ul v-else class="message-list">
+    <li v-for="(item, key) in data.board_data" :key="key" class="message-list__item">
+      <p class="message-list__user"><router-link :to="{name:'Profile',params:{prmUid:item.user}}">{{item.displayName}}</router-link>　<span class="_posted">({{item.posted}})</span></p>
+      <div class="message-list__body">{{item.msg}}</div>
+      <div v-if="item.photoURL" class="message-list__image"><img :src="item.photoURL" alt=""></div>
+      <div class="like-button">
+        <span @click="toggle_like" class="_button" :class="{'is-on':item.likeOn}" :data-id="item.key"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"/></svg></span>
+        <span v-if="item.like" class="_count">{{Object.keys(item.like).length}}</span>
+        <span v-else class="_count">0</span>
+      </div>
     </li>
   </ul>
   <button v-if="data.infinitLoadNext" @click="loadMore">もっと見る</button>
@@ -208,12 +210,12 @@ export default {
     const toggle_like = (e)=> {
       const _elm=e.currentTarget
       const _cntElm=_elm.nextElementSibling
-      if(_elm.classList.contains('on')){
+      if(_elm.classList.contains('is-on')){
         db.ref('board/'+_elm.getAttribute('data-id')+'/like').update({
           [data.store.state.uid]: null,
         }, (error) => {
           if (!error) {
-            _elm.classList.remove('on')
+            _elm.classList.remove('is-on')
             _cntElm.textContent = Number(_cntElm.textContent)-1
           }
         })
@@ -222,7 +224,7 @@ export default {
           [data.store.state.uid]: 1,
         }, (error) => {
           if (!error) {
-            _elm.classList.add('on')
+            _elm.classList.add('is-on')
             _cntElm.textContent = Number(_cntElm.textContent)+1
           }
         })

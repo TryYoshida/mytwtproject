@@ -27,7 +27,7 @@ ol, ul, dl, li, dt, dd {
   list-style: none;
 }
 
-img {
+img, svg {
   vertical-align: top;
 }
 
@@ -187,6 +187,59 @@ img.-border {
   background-color: #f0e3ee;
 }
 
+.app-footer {
+  margin-top: 100px;
+  position: relative;
+}
+
+@media only screen and (max-width: 767px) {
+  .app-footer {
+    margin-top: 60px;
+  }
+}
+
+.app-footer__inner {
+  padding: 20px 0;
+  border-top: 2px solid #f0e3ee;
+}
+
+.app-footer__pagetop {
+  color: #fff;
+  font-size: 20px;
+  line-height: 40px;
+  background-color: #7a4171;
+  text-align: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  opacity: 0;
+  visibility: hidden;
+  cursor: pointer;
+  user-select: none;
+  position: fixed;
+  right: 20px;
+  bottom: 35px;
+  z-index: 11;
+  transition: 0.3s;
+}
+
+@media only screen and (max-width: 767px) {
+  .app-footer__pagetop {
+    right: 16px;
+  }
+}
+
+.app-footer__pagetop.is-show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.app-footer__copyright {
+  color: #999;
+  font-size: 14px;
+  text-align: center;
+}
+
 .page-title {
   font-size: 20px;
   margin-bottom: 20px;
@@ -203,6 +256,12 @@ img.-border {
     flex-shrink: 0;
     max-width: 280px;
     margin-right: 40px;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .display-profile {
+    width: 280px;
   }
 }
 
@@ -284,7 +343,7 @@ img.-border {
 }
 
 .message-form ._button-set ._photo img:not([src=""]) {
-  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .message-form.count_exceeded textarea,
@@ -309,11 +368,10 @@ img.-border {
   appearance: none;
   transition: 0.3s ease-out;
   line-height: 30px;
-  font-weight: bold;
   background-color: #fff;
   margin-top: 5px;
   padding: 0 12px;
-  border: 2px solid #007bbb;
+  border: 1px solid #007bbb;
   border-radius: 8px;
   display: inline-block;
 }
@@ -351,6 +409,7 @@ img.-border {
 .message-form ._submit {
   font-size: 20px;
   line-height: 50px;
+  font-weight: bold;
   width: 150px;
   border: 2px solid #7a4171;
 }
@@ -383,15 +442,117 @@ img.-border {
   margin-top: 8px;
 }
 
-.btn-like {
+.tab__container {
+  margin-top: 40px;
+  padding-top: 44px;
+  position: relative;
+}
+
+@media only screen and (min-width: 1024px) {
+  .tab__container {
+    margin-left: 320px;
+  }
+}
+
+.tab__container::before {
+  content: "";
+  display: block;
+  margin-bottom: 10px;
+  border-top: 6px solid #f0e3ee;
+}
+
+.tab__title {
+  color: #999;
+  font-size: 18px;
+  line-height: 41px;
+  font-weight: bold;
+  box-sizing: border-box;
+  text-align: center;
+  width: 180px;
+  border-radius: 8px 8px 0 0;
+  border: 3px solid #f0e3ee;
+  border-bottom: none;
+  cursor: pointer;
+  user-select: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: 0.3s;
+}
+
+@media only screen and (max-width: 767px) {
+  .tab__title {
+    width: calc(50% - 4px);
+  }
+}
+
+.tab__title[data-type='all'] {
+  left: 192px;
+}
+
+@media only screen and (max-width: 767px) {
+  .tab__title[data-type='all'] {
+    left: calc(50% + 4px);
+  }
+}
+
+.tab__title:hover {
+  color: #7a4171;
+}
+
+.tab__title.is-current {
+  color: #7a4171;
+  background-color: #f0e3ee;
+}
+
+.tab__content:not(.is-current) {
+  display: none;
+}
+
+.message-list__item {
+  line-height: 1.5;
+  padding: 25px 20px 15px;
+  border-bottom: 1px solid #ccc;
+}
+
+.message-list__user {
+  font-weight: bold;
+}
+
+.message-list__user a {
+  color: #333;
+}
+
+.message-list__user ._posted {
+  color: #999;
+  font-weight: normal;
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  margin-left: 8px;
+}
+
+.message-list__body {
+  margin-top: 8px;
+}
+
+.message-list__image {
+  max-width: 500px;
+  margin-top: 12px;
+}
+
+.like-button {
   line-height: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 12px;
   cursor: pointer;
 }
 
-.btn-like path {
+.like-button ._button {
+  width: 20px;
+}
+
+.like-button ._button path {
   fill: #d33;
   stroke-width: 50;
   stroke: #d33;
@@ -401,16 +562,14 @@ img.-border {
   transition: .3s;
 }
 
-.btn-like:hover path {
+.like-button ._button:hover path {
   fill-opacity: .2;
 }
 
-.btn-like.on path {
+.like-button ._button.is-on path {
   fill-opacity: 1;
 }
 
-.like-cnt {
-  line-height: 20px;
-  display: inline-block;
+.like-button ._count {
   padding-left: 5px;
 }

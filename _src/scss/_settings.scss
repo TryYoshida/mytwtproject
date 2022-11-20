@@ -31,10 +31,16 @@ $FONT_BASE: 'Barlow', YuGothic, 'Yu Gothic Medium', 'Yu Gothic', 'Hiragino Kaku 
 
 // media
 $BREAKE_POINT_PC: 768px;
+$BREAKE_POINT_PC_WIDE: 1024px;
 $BREAKE_POINT_MOBILE_LANDSCAPE: 440px;
 $BREAKE_POINT_MOBILE_PORTRAIT: 375px;
 @mixin mqPc {
   @media only screen and (min-width: $BREAKE_POINT_PC) {
+    @content;
+  }
+}
+@mixin mqPcWide {
+  @media only screen and (min-width: $BREAKE_POINT_PC_WIDE) {
     @content;
   }
 }

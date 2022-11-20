@@ -1,10 +1,9 @@
 <template>
-  <!-- <h1 class="page-title">Home</h1> -->
   <template v-if="$store.state.uid">
     <div class="home-header">
       <div class="display-profile">
         <router-link :to="{name:'Profile',params:{prmUid:$store.state.uid}}">
-          <p class="_name">Hello!<br><span class="_large">{{ $store.state.displayName }}</span> さん</p>
+          <h1 class="_name">Hello!<br><span class="_large">{{ $store.state.displayName }}</span> さん</h1>
           <div class="_image"><img :src="$store.state.photoURL" alt="" width="100"></div>
         </router-link>
       </div>
@@ -14,19 +13,25 @@
         <p class="_counter"><span>{{data.msg.length}}</span>/{{data.msg_maxlength}}</p>
         <div class="_button-set">
           <div class="_upload">
-            <div class="_photo"><img :src="data.uploadImageUrl" alt="" width="100"></div>
             <div class="_button-file"><span class="_text">投稿する画像を選択</span><input type="file" accept="image/*" name="inputProfileFile" show-size @change="onImagePicked"></div>
             <input type="button" value="画像をクリア" @click="clearFileInput" class="_file-clear">
+            <div class="_photo"><img :src="data.uploadImageUrl" alt="" width="100"></div>
           </div>
           <button @click="add" :disabled="addBtn_disabled" class="_submit">投稿</button>
         </div>
         <p class="_text-done">{{data.message}}</p>
       </div>
     </div>
-    <h3 class="my-3">フォロー中のユーザーの投稿</h3>
-    <BoadList orderBy="user" :equalToObj="data.store.state.follow" />
-    <h3 class="my-3">全ユーザーの最新の投稿</h3>
-    <BoadList orderBy="key" ref="bordAll" />
+    <div class="tab__container">
+      <h2 class="tab__title is-current" data-type="follow">Favorite Users</h2>
+      <div class="tab__content is-current" data-type="follow">
+        <BoadList orderBy="user" :equalToObj="data.store.state.follow" />
+      </div>
+      <h2 class="tab__title" data-type="all">All Users</h2>
+      <div class="tab__content" data-type="all">
+        <BoadList orderBy="key" ref="bordAll" />
+      </div>
+    </div>
   </template>
   <template v-else>
     <div class="alert alert-warning">
@@ -140,12 +145,31 @@ export default {
       return data.msg.length>data.msg_maxlength?true:false
     })
 
+    // tabs
+    const setTab = ()=>{
+      const btnElements=document.querySelectorAll('.tab__container .tab__title')
+      for (const btnElement of btnElements) {
+        btnElement.addEventListener('click', ()=>{
+          if(!btnElement.classList.contains('is-current')){
+            for (const btnElement of btnElements) {
+              btnElement.classList.remove('is-current')
+              btnElement.nextElementSibling.classList.remove('is-current')
+            }
+            btnElement.classList.add('is-current')
+            btnElement.nextElementSibling.classList.add('is-current')
+          }
+        })
+      }
+    }
+
     onMounted(()=> {
       if (!data.store.state.uid){
         data.router.push('/signin')
       }
+      setTab()
     })
     return { data, onImagePicked, clearFileInput, add, addBtn_disabled, msg_cntOver, bordAll }
   },
 }
+
 </script>
