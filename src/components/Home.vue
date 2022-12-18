@@ -9,15 +9,15 @@
       </div>
       <div class="message-form" :class={count_exceeded:msg_cntOver}>
         <p class="_title">メッセージを投稿しよう！</p>
-        <textarea v-model.trim="data.msg" rows="5" placeholder="What’s happening"></textarea>
+        <textarea v-model.trim="data.msg" rows="5" placeholder="What’s happening" class="form-textarea"></textarea>
         <p class="_counter"><span>{{data.msg.length}}</span>/{{data.msg_maxlength}}</p>
         <div class="_button-set">
           <div class="_upload">
-            <div class="_button-file"><span class="_text">投稿する画像を選択</span><input type="file" accept="image/*" name="inputProfileFile" show-size @change="onImagePicked"></div>
-            <input type="button" value="画像をクリア" @click="clearFileInput" class="_file-clear">
+            <div class="form-file"><span class="_text">投稿する画像を選択</span><input type="file" accept="image/*" name="inputProfileFile" show-size @change="onImagePicked" class="_button"></div>
+            <input type="button" value="画像をクリア" @click="clearFileInput" class="form-file-clear">
             <div class="_photo"><img :src="data.uploadImageUrl" alt="" width="100"></div>
           </div>
-          <button @click="add" :disabled="addBtn_disabled" class="_submit">投稿</button>
+          <button @click="add" :disabled="addBtn_disabled" class="form-submit">投稿</button>
         </div>
         <p class="_text-done">{{data.message}}</p>
       </div>

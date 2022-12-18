@@ -1,0 +1,72 @@
+@charset "utf-8";
+// /*=============================================================
+// 	form
+// =============================================================*/
+.form-textarea{
+  font: inherit;
+  line-height: 1.5;
+  box-sizing: border-box;
+  width: 100%;
+  height: 7.8em;
+  padding: 0.8em 18px;
+  border: 1px solid $C_GRAY_LIGHT;
+  border-radius: $BORDER_RADIUS_BASE;
+  resize: none;
+}
+.form-file,
+.form-file-clear,
+.form-submit{
+  @include buttonBase;
+  line-height: 30px;
+  background-color: $C_WHITE;
+  margin-top: 5px;
+  padding: 0 12px;
+  border-radius: $BORDER_RADIUS_BASE;
+  display: inline-block;
+}
+.form-file{
+  color: $C_KEY2;
+  margin-right: 10px;
+  border: 1px solid $C_KEY2;
+  position: relative;
+  &:hover {
+    opacity: $OV_OPACITY;
+  }
+  ._button {
+    content: '';
+    display: block;
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    bottom: -2px;
+    left: -2px;
+    opacity: 0;
+  }
+}
+.form-file-clear{
+  background-color: $C_GRAY_LIGHT;
+  &:hover {
+    opacity: $OV_OPACITY;
+  }
+}
+.form-submit{
+  &:not(.-reset){
+    color: $C_WHITE;
+  }
+  &:not(:disabled){
+    background-color: $C_KEY1;
+    &:hover {
+      opacity: $OV_OPACITY;
+    }
+  }
+  &:disabled{
+    color: $C_GRAY_LIGHT;
+    background-color: $C_GRAY_BG;
+  }
+  &.-reset{
+    background-color: $C_GRAY_LIGHT;
+  }
+  & + &{
+    margin-left: 10px;
+  }
+}

@@ -1,44 +1,44 @@
 <template>
-  <section v-if="data.user_data">
-    <p><router-link to="/" class="btn btn-primary">ホームへ</router-link></p>
-    <h2><img :src="data.user_data.photoURL" alt="" width="100"> {{ data.user_data.displayName }}</h2>
-    <p v-if="data.myFlg"><button @click="toggle_editWin">プロフィールを編集</button></p>
-    <p v-else><button @click="toggle_follow" :data-user="props.prmUid" class="btnFollow" :class="{on:data.followFlg}">フォロー<span class="on">済<i class="icon far fa-check-circle"></i></span></button></p>
-    <div class="alert alert-primary">
-      <h3 class="my-3">プロフィール</h3>
-      <p v-if="data.user_data.place"><i class="fas fa-map-marker-alt"></i>{{ data.user_data.place }}</p>
-      <p v-if="data.user_data.siteURL"><a :href="data.user_data.siteURL" target="_blank" rel="noopener noreferrer"><i class="fas fa-link"></i>{{ data.user_data.siteURL }}</a></p>
-      <pre style="min-height:3em">{{ data.user_data.profile }}</pre>
-      <p>{{ data.user_data.follow!=null?Object.keys(data.user_data.follow).length:0 }} フォロー中、　{{ data.user_data.followed!=null?Object.keys(data.user_data.followed).length:0 }} フォロワー</p>
-      <h4>投稿</h4>
+  <p class="link-arrow"><router-link to="/" class="btn btn-primary">ホームへ</router-link></p>
+  <div class="profile__column" v-if="data.user_data">
+    <div class="profile__box">
+      <h1 class="_name">{{ data.user_data.displayName }}</h1>
+      <div class="_image"><img :src="data.user_data.photoURL" alt="" width="100"></div>
+      <p v-if="data.myFlg" class="profile__button -edit"><button @click="toggle_editWin" class="_button">プロフィールを編集</button></p>
+      <p v-else class="profile__button -follow"><button @click="toggle_follow" :data-user="props.prmUid" class="_button" :class="{'is-on':data.followFlg}">フォロー<span class="_off-text">する</span><span class="_on-text">済 ✓</span></button></p>
+      <h2 class="profile__title">プロフィール</h2>
+      <p v-if="data.user_data.place" class="profile__text -place">{{ data.user_data.place }}</p>
+      <p v-if="data.user_data.siteURL" class="profile__text -url"><a :href="data.user_data.siteURL" target="_blank" rel="noopener noreferrer">{{ data.user_data.siteURL }}</a></p>
+      <pre class="profile__text -profile">{{ data.user_data.profile }}</pre>
+      <p class="profile__text -follow">{{ data.user_data.follow!=null?Object.keys(data.user_data.follow).length:0 }} フォロー中、　{{ data.user_data.followed!=null?Object.keys(data.user_data.followed).length:0 }} フォロワー</p>
+    </div>
+    <div class="profile__boad">
       <BoadList orderBy="user" :equalTo="props.prmUid" />
     </div>
-  </section>
-  <div v-else class="loading"><span class="fas fa-spinner fa-pulse"></span></div>
+  </div>
   <teleport to="body">
     <div v-if="data.modalOpen" class="modal">
-      <div>
-        <!-- <form action="" @submit="editProfile"> -->
-          <div class="upload">
-            <p v-if="data.uploadImageUrl" class="photo"><img :src="data.uploadImageUrl" alt="" width="100"></p>
-            <p v-else class="photo"><img :src="data.mdUser_data.photoURL" alt="" width="100"></p>
-            <input type="file" accept="image/*" name="inputProfileFile" show-size @change="onImagePicked">
-            <input type="button" value="クリア" @click="clearFileInput">
-          </div>
-          <dl>
-            <dt>名前（必須）</dt>
-            <dd><input type="text" v-model="data.mdUser_data.displayName" class="form-control" required></dd>
-            <dt>自己紹介</dt>
-            <dd><textarea rows="5" v-model="data.mdUser_data.profile" class="form-control"></textarea></dd>
-            <dt>場所</dt>
-            <dd><input type="text" v-model="data.mdUser_data.place" class="form-control"></dd>
-            <dt>WebサイトURL</dt>
-            <dd><input type="url" v-model="data.mdUser_data.siteURL" class="form-control"></dd>
-          </dl>
-          <button @click="toggle_editWin" type="button" class="btn btn-primary">閉じる</button>
-          <button @click="editProfile" type="button" class="btn btn-primary">保存</button>
-        <!-- </form> -->
+      <div class="modal__inner">
+        <div class="upload">
+          <p v-if="data.uploadImageUrl" class="photo"><img :src="data.uploadImageUrl" alt="" width="100"></p>
+          <p v-else class="photo"><img :src="data.mdUser_data.photoURL" alt="" width="100"></p>
+          <div class="form-file"><span class="_text">投稿する画像を選択</span><input type="file" accept="image/*" name="inputProfileFile" show-size @change="onImagePicked" class="_button"></div>
+          <input type="button" value="画像をクリア" @click="clearFileInput" class="form-file-clear">
+        </div>
+        <dl>
+          <dt>名前（必須）</dt>
+          <dd><input type="text" v-model="data.mdUser_data.displayName" class="form-text" required></dd>
+          <dt>自己紹介</dt>
+          <dd><textarea rows="5" v-model="data.mdUser_data.profile" class="form-textarea"></textarea></dd>
+          <dt>場所</dt>
+          <dd><input type="text" v-model="data.mdUser_data.place" class="form-text"></dd>
+          <dt>WebサイトURL</dt>
+          <dd><input type="url" v-model="data.mdUser_data.siteURL" class="form-text"></dd>
+        </dl>
+        <button @click="toggle_editWin" type="button" class="form-submit -reset">閉じる</button>
+        <button @click="editProfile" type="button" class="form-submit">保存</button>
       </div>
+      <div class="modal__bg" @click="toggle_editWin"></div>
     </div>
   </teleport>
 </template>
@@ -177,37 +177,39 @@ export default {
 
     //フォロー
     const toggle_follow = (e)=> {
-      const _elm=e.currentTarget
-      const _elmUser=_elm.getAttribute('data-user')
-      const _myFollow=data.store.state.follow?data.store.state.follow:{}
+      const targetElement=e.currentTarget
+      const targetUser=targetElement.getAttribute('data-user')
+      const myFollowData=data.store.state.follow?data.store.state.follow:{}
       // フォーロー済みのとき：フォローをやめる
-      if(_elm.classList.contains('on')){
+      if(targetElement.classList.contains('is-on')){
         db.ref('users/').update({
-          [data.store.state.uid+'/follow/'+_elmUser]: null,
-          [_elmUser+'/followed/'+data.store.state.uid]: null,
+          [data.store.state.uid+'/follow/'+targetUser]: null,
+          [targetUser+'/followed/'+data.store.state.uid]: null,
         }, (error) => {
-          if (!error) {
-            delete data.user_data.followed[_elmUser]
-            delete _myFollow[_elmUser]
-            data.store.dispatch("authFollow", _myFollow)
-            _elm.classList.remove('on')
+          if (error) {
+            return
           }
+          delete data.user_data.followed[targetUser]
+          delete myFollowData[targetUser]
+          data.store.dispatch("authFollow", myFollowData)
+          targetElement.classList.remove('is-on')
         })
       // フォーローしていないとき：フォローする
       }else{
         db.ref('users/').update({
-          [data.store.state.uid+'/follow/'+_elmUser]: 1,
-          [_elmUser+'/followed/'+data.store.state.uid]: 1,
+          [data.store.state.uid+'/follow/'+targetUser]: 1,
+          [targetUser+'/followed/'+data.store.state.uid]: 1,
         }, (error) => {
-          if (!error) {
-            if(data.user_data.followed===undefined){
-              data.user_data.followed={}
-            }
-            data.user_data.followed[_elmUser]=1
-            _myFollow[_elmUser]=1
-            data.store.dispatch("authFollow", _myFollow)
-            _elm.classList.add('on')
+          if (error) {
+            return
           }
+          if(data.user_data.followed===undefined){
+            data.user_data.followed={}
+          }
+          data.user_data.followed[targetUser]=1
+          myFollowData[targetUser]=1
+          data.store.dispatch("authFollow", myFollowData)
+          targetElement.classList.add('is-on')
         })
       }
     }
@@ -224,26 +226,3 @@ export default {
   },
 }
 </script>
-
-<style>
-.modal {
-  position: absolute;
-  top: 0; right: 0; bottom: 0; left: 0;
-  background-color: rgba(0,0,0,.5);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.modal>div {
-  background-color: #fff;
-  box-sizing: border-box;
-  width: 500px;
-  max-width: 98%;
-  padding: 15px;
-}
-.btnFollow:hover{background-color: #ffe;}
-.btnFollow .on{display: none;}
-.btnFollow.on{background-color: #64c1ff;}
-.btnFollow.on .on{display: inline-block;}
-</style>

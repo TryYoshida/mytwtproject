@@ -47,7 +47,7 @@ export default {
     }
 
     onMounted(()=> {
-      data.isLogin = data.store.state.uid;
+      data.isLogin = Boolean(data.store.state.uid);
     })
     return { data, doLogout }
   },

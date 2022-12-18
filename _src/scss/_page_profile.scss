@@ -1,0 +1,85 @@
+@charset "utf-8";
+// /*=============================================================
+// 	profile
+// =============================================================*/
+.profile__column{
+	margin-top: 40px;
+	@include mqPc {
+		display: flex;
+	}
+}
+.profile__box{
+	@include mqPc {
+		flex: 0 0 min(34.2%, 280px);
+		margin-right: 40px;
+	}
+	._name{
+		font-size: 32px;
+		font-weight: bold;
+	}
+	._image{
+		margin-top: 10px;
+	}
+}
+.profile__button{
+	margin-top: 15px;
+	._button{
+		@include buttonBase;
+		color: $C_WHITE;
+		background-color: $C_KEY2;
+		line-height: 30px;
+		margin-top: 5px;
+		padding: 0 12px;
+		border-radius: $BORDER_RADIUS_BASE;
+		display: inline-block;
+		&:hover {
+			opacity: $OV_OPACITY;
+		}
+	}
+	&.-follow{
+		._button{
+			color: $C_KEY2;
+			background-color: $C_WHITE;
+			border: 1px solid $C_KEY2;
+			transition: $TRANSITION_HOVER_BASE;
+			._off-text{display: inline-block;}
+			._on-text{display: none;}
+			&:hover,
+			&.is-on{
+				color: $C_WHITE;
+				background-color: $C_KEY2;
+			}
+			&.is-on{
+				._off-text{display: none;}
+				._on-text{display: inline-block;}
+			}
+		}
+	}
+}
+.profile__title{
+	font-weight: bold;
+	margin: 30px 0 10px;
+}
+.profile__text{
+	line-height: 1.5;
+	margin-top: 5px;
+	&.-place{
+		background: url(/assets/img/icon_map.svg) no-repeat 1px center/12px auto;
+		padding-left: 20px;
+	}
+	&.-url{
+		background: url(/assets/img/icon_link.svg) no-repeat 0 center/14px auto;
+		padding-left: 20px;
+	}
+	&.-profile{
+		color: #666;
+		font-size: 14px;
+		margin-top: 10px;
+	}
+	&.-follow{
+		margin-top: 15px;
+	}
+}
+.profile__boad{
+	flex-grow: 1;
+}
