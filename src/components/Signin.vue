@@ -1,10 +1,10 @@
 <template>
   <div class="signin">
-    <h2>ログイン／新規登録</h2>
+    <h1 class="signin__title page-title">ログイン ／ 新規登録</h1>
     <div id="firebaseui-auth-container"></div>
     <div id="loader">Loading...</div>
-    <p>Demo User: test@example.com</p>
-    <p>投稿なしユーザー: test0@example.com</p>
+    <p class="signin__text">Demo User: test@example.com<br>
+      投稿なしユーザー: test0@example.com</p>
   </div>
 </template>
 
@@ -64,8 +64,8 @@ export default {
                 obj.follow = result.follow===null ? {} : result.follow
                 obj.followed = result.followed===null ? {} : result.followed
 
-                console.log(result)
-                console.log(obj)
+                // console.log(result)
+                // console.log(obj)
                 obj.uid=reUid
                 data.store.dispatch("auth", obj)
               })

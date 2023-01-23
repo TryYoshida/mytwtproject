@@ -1,32 +1,43 @@
 <template>
-  <section>
-    <div class="alert h6 text-right"><button @click="doLogout" class="btn btn-primary">ログアウト</button></div>
-    <h2>ホーム<br>
-      <router-link :to="{name:'Profile',params:{prmUid:$store.state.uid}}">{{ $store.state.displayName }} さん <img :src="$store.state.photoURL" alt="" width="100"></router-link></h2>
-    <p class="h5">{{data.message}}</p>
-    <div v-if="$store.state.uid" class="alert alert-primary">
-      <div class="form-group text-left" :class={msgOver:msg_cntOver}>
-        <label class="h5">Message</label>
-        <textarea v-model.trim="data.msg" rows="5" class="form-control" placeholder="What’s happening"></textarea>
-        <p class="msg-counter"><span>{{data.msg.length}}</span>/{{data.msg_maxlength}}</p>
-        <div class="upload">
-          <p class="photo"><img :src="data.uploadImageUrl" alt="" width="100"></p>
-          <input type="file" accept="image/*" name="inputProfileFile" show-size @change="onImagePicked">
-          <input type="button" value="クリア" @click="clearFileInput">
+  <template v-if="$store.state.uid">
+    <div class="home-header">
+      <div class="display-profile">
+        <router-link :to="{name:'Profile',params:{prmUid:$store.state.uid}}">
+          <h1 class="_name">Hello!<br><span class="_large">{{ $store.state.displayName }}</span> さん</h1>
+          <div class="_image"><img :src="$store.state.photoURL" alt="" width="100"></div>
+        </router-link>
+      </div>
+      <div class="message-form" :class={count_exceeded:msg_cntOver}>
+        <p class="_title">メッセージを投稿しよう！</p>
+        <textarea v-model.trim="data.msg" rows="5" placeholder="What’s happening" class="form-textarea"></textarea>
+        <p class="_counter"><span>{{data.msg.length}}</span>/{{data.msg_maxlength}}</p>
+        <div class="_button-set">
+          <div class="_upload">
+            <div class="form-file"><span class="_text">投稿する画像を選択</span><input type="file" accept="image/*" name="inputProfileFile" show-size @change="onImagePicked" class="_button"></div>
+            <input type="button" value="画像をクリア" @click="clearFileInput" class="form-file-clear">
+            <div class="_photo"><img :src="data.uploadImageUrl" alt="" width="100"></div>
+          </div>
+          <button @click="add" :disabled="addBtn_disabled" class="form-submit">投稿</button>
         </div>
-        <button @click="add" :disabled="addBtn_disabled" class="btn btn-primary">投稿</button>
-      </div>
-      <h3 class="my-3">フォロー中のユーザーの投稿</h3>
-      <BoadList orderBy="user" :equalToObj="data.store.state.follow" />
-      <h3 class="my-3">全ユーザーの最新の投稿</h3>
-      <BoadList orderBy="key" ref="bordAll" />
-    </div>
-    <div v-else>
-      <div class="alert alert-warning">
-        ※現在、ログインされていません。
+        <p class="_text-done">{{data.message}}</p>
       </div>
     </div>
-  </section>
+    <div class="tab__container">
+      <h2 class="tab__title is-current" data-type="follow">Favorite Users</h2>
+      <div class="tab__content is-current" data-type="follow">
+        <BoadList orderBy="user" :equalToObj="data.store.state.follow" />
+      </div>
+      <h2 class="tab__title" data-type="all">All Users</h2>
+      <div class="tab__content" data-type="all">
+        <BoadList orderBy="key" ref="bordAll" />
+      </div>
+    </div>
+  </template>
+  <template v-else>
+    <div class="alert alert-warning">
+      ※現在、ログインされていません。
+    </div>
+  </template>
 </template>
 
 <script>
@@ -50,7 +61,7 @@ export default {
   },
   setup(props) {
     const data = reactive({
-      message: 'ミニ伝言板。最新の投稿を表示します。',
+      message: '',
       msg: '',
       msg_maxlength: commonJS.MESSAGE_MAX_LENGTH,
       uploadImageUrl: "",
@@ -62,32 +73,6 @@ export default {
     //子実行テスト
     const bordAll = ref(null)
 
-    // 初期表示
-    const init = ()=> {
-      data.message = 'ログインしました。'
-    }
-
-    // ログアウト処理
-    const doLogout = ()=> {
-      logout().then(() => {
-        data.board_data = {}
-        data.store.dispatch("auth", {
-          uid: '',
-          //email: '',
-          displayName: '',
-          photoURL: '',
-          follow: null,
-          followed: null
-        })
-        data.message = 'ログアウトしました。'
-        data.router.push('/signin')
-      })
-      .catch((error) => {
-        // エラー処理をここで行う
-        console.log(error)
-      })
-    }
-    
     //写真のアップロード
     const onImagePicked = (e)=>{
       const file = e.target.files[0]
@@ -116,7 +101,6 @@ export default {
     // メッセージ追加
     const add = ()=> {
       if (!data.store.state.uid){
-        data.message='ログイン情報が確認できませんでした'
         data.router.push('/signin')
         return
       }
@@ -161,54 +145,31 @@ export default {
       return data.msg.length>data.msg_maxlength?true:false
     })
 
+    // tabs
+    const setTab = ()=>{
+      const btnElements=document.querySelectorAll('.tab__container .tab__title')
+      for (const btnElement of btnElements) {
+        btnElement.addEventListener('click', ()=>{
+          if(!btnElement.classList.contains('is-current')){
+            for (const btnElement of btnElements) {
+              btnElement.classList.remove('is-current')
+              btnElement.nextElementSibling.classList.remove('is-current')
+            }
+            btnElement.classList.add('is-current')
+            btnElement.nextElementSibling.classList.add('is-current')
+          }
+        })
+      }
+    }
+
     onMounted(()=> {
-      if (data.store.state.uid){
-        init()
-      }else{
-        data.message='ログイン情報が確認できませんでした（onMounted）'
+      if (!data.store.state.uid){
         data.router.push('/signin')
       }
+      setTab()
     })
-    return { data, init, doLogout, onImagePicked, clearFileInput, add, addBtn_disabled, msg_cntOver, bordAll }
+    return { data, onImagePicked, clearFileInput, add, addBtn_disabled, msg_cntOver, bordAll }
   },
 }
-</script>
 
-<style>
-.msgOver textarea,
-.msgOver textarea:focus{
-  color: #d33;
-  background-color: #fafadf;
-}
-.msgOver .msg-counter>span{
-  color: #d33;
-  font-weight: bold;
-}
-.btn-like{
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  line-height: 1;
-  cursor: pointer;
-}
-.btn-like path{
-  fill: #d33;
-  stroke-width:50;
-  stroke: #d33;
-  fill-opacity: 0;
-  transform:scale(.9,.9);
-  transform-origin: center center;
-  transition: .3s;
-}
-.btn-like:hover path{
-  fill-opacity: .2;
-}
-.btn-like.on path{
-  fill-opacity: 1;
-}
-.like-cnt{
-  line-height: 20px;
-  display: inline-block;
-  padding-left: 5px;
-}
-</style>
+</script>

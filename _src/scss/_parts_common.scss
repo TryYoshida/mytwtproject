@@ -1,0 +1,125 @@
+@charset "utf-8";
+// /*=============================================================
+// 	common style
+// =============================================================*/
+// /* font
+// -------------------------------------------------------------*/
+
+// /* a Element
+// -------------------------------------------------------------*/
+a {
+	color: $C_LINK;
+	text-decoration: none;
+	transition: $TRANSITION_HOVER_BASE;
+	transition-property: color, background, opacity;
+	&:hover {
+		text-decoration: underline;
+	}
+}
+.link-arrow {
+	font-size: 14px;
+	line-height: 1.4;
+	font-weight: bold;
+	a{
+		color: $C_TEXT;
+		text-decoration: none;
+		display: inline-block;
+		padding: 4px 0 4px 15px;
+		position: relative;
+		&::before{
+			content: '';
+			box-sizing: border-box;
+			width: 8px;
+			height: 8px;
+			border-top: 2px solid $C_KEY1;
+			border-right: 2px solid $C_KEY1;
+			position: absolute;
+			top: 50%;
+			left: 0;
+			transform: translateY(-50%) rotate(45deg);
+		}
+		&::after{
+			content: '';
+			width: 0;
+			border-bottom: 1px solid $C_KEY1;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			transition: 0.15s ease-out;
+		}
+		&:hover {
+			&::after{
+				width: 100%;
+			}
+		}
+	}
+}
+
+// /* block Layout
+// -------------------------------------------------------------*/
+img {
+	box-sizing: border-box;
+	max-width: 100%;
+	height: auto;
+	&.-border {
+		border: 1px solid $C_GRAY_LIGHT;
+	}
+}
+.pc {
+	&:not(.sp) {
+		@include mqSp {
+			display: none !important;
+		}
+	}
+}
+.sp {
+	&:not(.pc) {
+		@include mqPc {
+			display: none !important;
+		}
+	}
+}
+.sp-portrait {
+	&:not(.pc) {
+		@include mqPc {
+			display: none !important;
+		}
+	}
+	@media only screen and (min-width: $BREAKE_POINT_MOBILE_PORTRAIT) and (max-width: $BREAKE_POINT_PC - 1px) {
+		display: none !important;
+	}
+}
+.container {
+  min-width: 320px;
+}
+.page-inner {
+	max-width: $WIDTH_CONTENTS;
+	margin-right: auto;
+	margin-left: auto;
+	padding-right: $CONTENTS_PADDING_PC;
+	padding-left: $CONTENTS_PADDING_PC;
+	@include mqSp {
+		padding-right: $CONTENTS_PADDING_SP;
+		padding-left: $CONTENTS_PADDING_SP;
+	}
+	@include mqSpSmall {
+		padding-right: $CONTENTS_PADDING_SP_SMALL;
+		padding-left: $CONTENTS_PADDING_SP_SMALL;
+	}
+}
+.main {
+	padding-top: $HEIGHT_HEADER_PC;
+	@include mqSp {
+		padding-top: $HEIGHT_HEADER_SP;
+	}
+}
+.contents{
+	padding-top: 30px;
+}
+
+// /* page-title
+// -------------------------------------------------------------*/
+.page-title{
+	font-size: 20px;
+	margin-bottom: 20px;
+}

@@ -1,0 +1,57 @@
+@charset "utf-8";
+// /*=============================================================
+// 	tab
+// =============================================================*/
+.tab__container{
+	margin-top: 40px;
+	padding-top: 44px;
+	position: relative;
+	@include mqPcWide {
+		margin-left: 320px;
+	}
+	&::before{
+		content: "";
+		display: block;
+		margin-bottom: 10px;
+		border-top: 6px solid $C_KEY1_LIGHT;
+	}
+}
+.tab__title{
+	color: map-get($COLOR_MAP, gray-lv2);
+	font-size: 18px;
+	line-height: 41px;
+	font-weight: bold;
+	box-sizing: border-box;
+	text-align: center;
+	width: 180px;
+	border-radius: $BORDER_RADIUS_BASE $BORDER_RADIUS_BASE 0 0;
+	border: 3px solid $C_KEY1_LIGHT;
+	border-bottom: none;
+	cursor: pointer;
+	user-select: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	transition: 0.3s;
+	@include mqSp {
+		width: calc(50% - 4px);
+	}
+	&[data-type='all']{
+		left: 192px;
+		@include mqSp {
+			left: calc(50% + 4px);
+		}
+	}
+	&:hover{
+		color: $C_KEY1;
+	}
+	&.is-current{
+		color: $C_KEY1;
+		background-color: $C_KEY1_LIGHT;
+	}
+}
+.tab__content{
+	&:not(.is-current){
+		display: none;
+	}
+}

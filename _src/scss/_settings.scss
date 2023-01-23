@@ -1,0 +1,88 @@
+@charset "utf-8";
+// /*=============================================================
+// 	Settings
+// =============================================================*/
+$COLOR_MAP: (
+	white: #fff,
+	red: #d9333f,
+	gray-lv1: #333,
+	gray-lv2: #999,
+	gray-lv3: #ccc,
+	gray-lv4: #e1e1e1,
+	key1: #7a4171,
+	key2: #007bbb
+);
+
+// COLOR THEME
+$C_WHITE: map-get($COLOR_MAP, white);
+$C_KEY1: map-get($COLOR_MAP, key1);
+$C_KEY1_LIGHT: lighten(map-get($COLOR_MAP, key1), 55%);
+$C_KEY2: map-get($COLOR_MAP, key2);
+$C_GRAY_LIGHT: map-get($COLOR_MAP, gray-lv3);
+$C_GRAY_BG: map-get($COLOR_MAP, gray-lv4);
+$C_TEXT: map-get($COLOR_MAP, gray-lv1);
+$C_LINK: map-get($COLOR_MAP, key2);
+
+// fonts
+$FONT_BASE: 'Barlow', YuGothic, 'Yu Gothic Medium', 'Yu Gothic', 'Hiragino Kaku Gothic ProN', sans-serif;
+@mixin fontAccent {
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+// media
+$BREAKE_POINT_PC: 768px;
+$BREAKE_POINT_PC_WIDE: 1024px;
+$BREAKE_POINT_MOBILE_LANDSCAPE: 440px;
+$BREAKE_POINT_MOBILE_PORTRAIT: 375px;
+@mixin mqPc {
+  @media only screen and (min-width: $BREAKE_POINT_PC) {
+    @content;
+  }
+}
+@mixin mqPcWide {
+  @media only screen and (min-width: $BREAKE_POINT_PC_WIDE) {
+    @content;
+  }
+}
+@mixin mqSp {
+  @media only screen and (max-width: $BREAKE_POINT_PC - 1) {
+    @content;
+  }
+}
+@mixin mqSpPortrait {
+  @media only screen and (max-width: $BREAKE_POINT_MOBILE_LANDSCAPE - 1) {
+    @content;
+  }
+}
+@mixin mqSpSmall {
+  @media only screen and (max-width: $BREAKE_POINT_MOBILE_PORTRAIT - 1) {
+    @content;
+  }
+}
+
+// width/height
+$WIDTH_CONTENTS: 1072px;
+$CONTENTS_PADDING_PC: 30px;
+$CONTENTS_PADDING_SP: 16px;
+$CONTENTS_PADDING_SP_SMALL: 10px;
+$HEIGHT_HEADER_PC: 50px;
+$HEIGHT_HEADER_SP: 50px;
+
+// animation
+$TRANSITION_HOVER_BASE: 0.3s ease-out;
+$OV_OPACITY: 0.7;
+
+// border
+$BORDER_RADIUS_BASE: 8px;
+$BORDER_RADIUS_LARGE: 24px;
+
+// button
+@mixin buttonBase {
+  color: inherit;
+  font: inherit;
+  background: none;
+  border: none;
+  border-radius: 20px;
+  appearance: none;
+  transition: $TRANSITION_HOVER_BASE;
+}

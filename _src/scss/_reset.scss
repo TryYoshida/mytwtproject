@@ -1,0 +1,54 @@
+@charset "utf-8";
+// /*=============================================================
+// 	reset
+// =============================================================*/
+* {
+	padding: 0;
+	margin: 0;
+}
+section,article,aside,hgroup,header,footer,nav,figure,figcaption,summary,main {
+	display: block;
+	padding: 0;
+	margin: 0;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  color: $C_TEXT;
+  font: normal normal 16px/1 #{$FONT_BASE};
+  font-feature-settings: 'pwid';
+  letter-spacing: 0.04em;
+  background: $C_WHITE;
+  text-align: left;
+}
+ol,ul,dl,li,dt,dd {
+	list-style: none;
+}
+img, svg {
+	vertical-align: top;
+}
+a,img {
+	border: none;
+}
+h1,h2,h3,h4,h5,h6 {
+	font-size: 100%;
+}
+sup,sub {
+	height: 0;
+	line-height: 1;
+	vertical-align: baseline;
+	margin: 0 1px;
+	position: relative;
+}
+sup {
+	bottom: 0.7ex;
+}
+sub {
+	top: 0.1ex;
+}
+button, input[type='button'], input[type='file'] {
+	&:not(:disabled) {
+		cursor: pointer;
+	}
+}
