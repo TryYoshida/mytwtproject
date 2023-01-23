@@ -4,7 +4,7 @@
     <div class="profile__box">
       <h1 class="_name">{{ data.user_data.displayName }}</h1>
       <div class="_image"><img :src="data.user_data.photoURL" alt="" width="100"></div>
-      <p v-if="data.myFlg" class="profile__button -edit"><button @click="toggle_editWin" class="_button">プロフィールを編集</button></p>
+      <p v-if="data.myFlg" class="profile__button -edit"><button @click="toggleEditWindow" class="_button">プロフィールを編集</button></p>
       <p v-else class="profile__button -follow"><button @click="toggle_follow" :data-user="props.prmUid" class="_button" :class="{'is-on':data.followFlg}">フォロー<span class="_off-text">する</span><span class="_on-text">済 ✓</span></button></p>
       <h2 class="profile__title">プロフィール</h2>
       <p v-if="data.user_data.place" class="profile__text -place">{{ data.user_data.place }}</p>
@@ -25,20 +25,20 @@
           <div class="form-file"><span class="_text">投稿する画像を選択</span><input type="file" accept="image/*" name="inputProfileFile" show-size @change="onImagePicked" class="_button"></div>
           <input type="button" value="画像をクリア" @click="clearFileInput" class="form-file-clear">
         </div>
-        <dl>
-          <dt>名前（必須）</dt>
-          <dd><input type="text" v-model="data.mdUser_data.displayName" class="form-text" required></dd>
-          <dt>自己紹介</dt>
-          <dd><textarea rows="5" v-model="data.mdUser_data.profile" class="form-textarea"></textarea></dd>
-          <dt>場所</dt>
-          <dd><input type="text" v-model="data.mdUser_data.place" class="form-text"></dd>
-          <dt>WebサイトURL</dt>
-          <dd><input type="url" v-model="data.mdUser_data.siteURL" class="form-text"></dd>
+        <dl class="profile__modal-list">
+          <dt class="_title">名前（必須）</dt>
+          <dd class="_data"><input type="text" v-model="data.mdUser_data.displayName" class="form-text" required></dd>
+          <dt class="_title">自己紹介</dt>
+          <dd class="_data"><textarea rows="5" v-model="data.mdUser_data.profile" class="form-textarea"></textarea></dd>
+          <dt class="_title">場所</dt>
+          <dd class="_data"><input type="text" v-model="data.mdUser_data.place" class="form-text"></dd>
+          <dt class="_title">WebサイトURL</dt>
+          <dd class="_data"><input type="url" v-model="data.mdUser_data.siteURL" class="form-text"></dd>
         </dl>
-        <button @click="toggle_editWin" type="button" class="form-submit -reset">閉じる</button>
+        <button @click="toggleEditWindow" type="button" class="form-submit -reset">閉じる</button>
         <button @click="editProfile" type="button" class="form-submit">保存</button>
       </div>
-      <div class="modal__bg" @click="toggle_editWin"></div>
+      <div class="modal__bg" @click="toggleEditWindow"></div>
     </div>
   </teleport>
 </template>
@@ -55,6 +55,7 @@ import BoadList from './BoadList.vue'
 
 const db = firebase.database()
 const storage = firebase.storage()
+const htmlElement = document.documentElement
 
 export default {
   props:{
@@ -97,15 +98,17 @@ export default {
     }
 
     //プロフィールの編集　モーダルのON/OFF
-    const toggle_editWin = ()=> {
+    const toggleEditWindow = ()=> {
       if(!data.modalOpen){
         data.mdUser_data = {...data.user_data}
         data.modalOpen = true
+        htmlElement.dataset.modalOpen = true
       }else{
         data.modalOpen = false
         data.mdUser_data = null
         data.uploadImageUrl = ""
         data.input_image = null
+        delete htmlElement.dataset.modalOpen
       }
     }
 
@@ -171,7 +174,7 @@ export default {
           }
         })
       }
-      toggle_editWin()
+      toggleEditWindow()
       return false
     }
 
@@ -222,7 +225,7 @@ export default {
         data.router.push('/signin')
       }
     })
-    return { props, data, init, toggle_editWin, onImagePicked, clearFileInput, editProfile, toggle_follow }
+    return { props, data, init, toggleEditWindow, onImagePicked, clearFileInput, editProfile, toggle_follow }
   },
 }
 </script>

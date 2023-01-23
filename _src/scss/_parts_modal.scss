@@ -2,6 +2,12 @@
 // /*=============================================================
 // 	modal
 // =============================================================*/
+html[data-modal-open='true']{
+  overflow: hidden;
+  body{
+    overflow-y: scroll;
+  }
+}
 .modal {
   display: flex;
   flex-direction: column;
@@ -12,16 +18,18 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-  z-index: 99;
+  z-index: 102;
 }
 .modal__inner {
   background-color: #fff;
   box-sizing: border-box;
   width: 500px;
   max-width: 98%;
+  max-height: 98%;
   padding: 15px;
+  overflow: auto;
   position: relative;
-  z-index: 2;
+  z-index: 103;
 }
 .modal__bg{
   background-color: rgba(0,0,0,.5);
@@ -30,5 +38,5 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-  z-index: 1;
+  z-index: 101;
 }

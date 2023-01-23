@@ -14,7 +14,7 @@
       </div>
     </li>
   </ul>
-  <button v-if="data.infinitLoadNext" @click="loadMore">もっと見る</button>
+  <button v-if="data.infinitLoadNext" class="more-button">もっと見る</button>
 </template>
 
 <script>
@@ -23,6 +23,7 @@ import firebase from '../plugins/firebase'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import * as commonJS from '../plugins/common'
+import scrollTrigger from '../plugins/ScrollTrigger'
 
 const db = firebase.database()
 const db_board = db.ref('board/')
@@ -78,7 +79,7 @@ export default {
           data.message="フォローしているユーザーがいません"
           return
         }
-        Object.keys(props.equalToObj).forEach(function (key) {
+        Object.keys(props.equalToObj).forEach((key) => {
           set_db = db_board.orderByChild(props.orderBy).equalTo(key)
           setBoadDateFollowAll(set_db)
         })
@@ -112,6 +113,7 @@ export default {
         arr = arr.concat(resulArr)
         data.board_data = arr
         setName()
+        setLoadMore()
       })
     }
 
@@ -127,6 +129,7 @@ export default {
       }
       data.board_data = arr
       setName()
+      setLoadMore()
     }
     const setBoadDateFollowAll = (_db)=>{
       _db.once('value', (snapshot)=> {
@@ -156,6 +159,7 @@ export default {
       }
       data.board_data = arr
       setName()
+      setLoadMore()
     }
     const setBoadDateSingleUserAll = (_db)=>{
       _db.once('value', (snapshot)=> {
@@ -165,20 +169,30 @@ export default {
     }
 
     //もっと見る
-    const loadMore = ()=>{
-      // フォローしているユーザーの投稿
-      if(props.equalToObj){
-        followInfinitLoadLastNum += props.numPerPage
-        setBoadDateFollow(followArr)
-      }else if(props.orderBy==='key'){
-        // 全投稿
-        set_db = db_board.orderByKey().endBefore(data.infinitLoadLastKey).limitToLast(props.numPerPage)
-        setBoadDate(set_db)
-      }else{
-        // 特定の1ユーザーの投稿
-        singleUserInfinitLoadLastNum += props.numPerPage
-        setBoadDateSingleUser(singleUserArr)
+    const setLoadMore = ()=>{
+      const loadMore = ()=>{
+        setTimeout(() => {
+          // フォローしているユーザーの投稿
+          if(props.equalToObj){
+            followInfinitLoadLastNum += props.numPerPage
+            setBoadDateFollow(followArr)
+          }else if(props.orderBy==='key'){
+            // 全投稿
+            set_db = db_board.orderByKey().endBefore(data.infinitLoadLastKey).limitToLast(props.numPerPage)
+            setBoadDate(set_db)
+          }else{
+            // 特定の1ユーザーの投稿
+            singleUserInfinitLoadLastNum += props.numPerPage
+            setBoadDateSingleUser(singleUserArr)
+          }
+        }, 200)
       }
+      const buttonElements = document.querySelectorAll('.more-button')
+      scrollTrigger(buttonElements, {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0
+      }, loadMore)
     }
 
     //ユーザー名を表示
@@ -247,7 +261,7 @@ export default {
     nextTick(()=> {
       init()
     })
-    return { props, data, init, loadMore, toggle_like, addNew }
+    return { props, data, init, toggle_like, addNew }
   },
 }
 </script>

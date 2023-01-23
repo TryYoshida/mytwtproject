@@ -2,6 +2,15 @@
 // /*=============================================================
 // 	form
 // =============================================================*/
+.form-text{
+  font: inherit;
+  line-height: 1.5;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.5em 18px;
+  border: 1px solid $C_GRAY_LIGHT;
+  border-radius: $BORDER_RADIUS_BASE;
+}
 .form-textarea{
   font: inherit;
   line-height: 1.5;
